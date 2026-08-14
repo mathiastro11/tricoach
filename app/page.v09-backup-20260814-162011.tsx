@@ -147,11 +147,7 @@ export default function Home() {
 
   const [supabase] = useState(() => createClient());
   const [userId, setUserId] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState("");
   const [dbReady, setDbReady] = useState(false);
-
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
 
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackStatus, setFeedbackStatus] =
@@ -160,9 +156,6 @@ export default function Home() {
   const [feedbackFeeling, setFeedbackFeeling] =
     useState<"Great" | "Normal" | "Heavy">("Normal");
   const [feedbackComment, setFeedbackComment] = useState("");
-
-  const [selectedWorkout, setSelectedWorkout] =
-    useState<TrainingPlanDay | null>(null);
 
   const [chat, setChat] = useState<ChatMessage[]>([
     {
@@ -186,7 +179,6 @@ export default function Home() {
 
         if (user) {
           setUserId(user.id);
-          setUserEmail(user.email ?? "");
 
           const { data: profileData, error: profileError } =
             await supabase
@@ -678,82 +670,6 @@ export default function Home() {
       alert("TriCoach could not build your week. Please try again.");
     } finally {
       setIsPlanLoading(false);
-    }
-  }
-
-  async function logOut() {
-    try {
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        throw error;
-      }
-
-      localStorage.removeItem("tricoach-athlete");
-      localStorage.removeItem("tricoach-plan");
-      localStorage.removeItem("tricoach-workout-history");
-      localStorage.removeItem("tricoach-plan-history");
-      localStorage.removeItem("tricoach-weekly-review");
-
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Could not log out:", error);
-      alert("Could not log out. Please try again.");
-    }
-  }
-
-  function editAthleteProfile() {
-    setSettingsOpen(false);
-    setStep(0);
-    setScreen("onboarding");
-  }
-
-  async function resetTrainingPlan() {
-    const confirmed = window.confirm(
-      "Reset your training plan? Your account and athlete profile will be kept, but your active plan, workout feedback and weekly review will be cleared."
-    );
-
-    if (!confirmed) return;
-
-    setIsResetting(true);
-
-    try {
-      if (userId) {
-        const { error } = await supabase
-          .from("training_state")
-          .delete()
-          .eq("user_id", userId);
-
-        if (error) {
-          throw error;
-        }
-      }
-
-      localStorage.removeItem("tricoach-plan");
-      localStorage.removeItem("tricoach-workout-history");
-      localStorage.removeItem("tricoach-plan-history");
-      localStorage.removeItem("tricoach-weekly-review");
-
-      setTrainingPlan(null);
-      setWorkoutHistory([]);
-      setPlanHistory([]);
-      setWeeklyReview(null);
-
-      setSettingsOpen(false);
-      setStep(0);
-      setScreen("onboarding");
-
-    } catch (error) {
-      console.error(
-        "Could not reset training plan:",
-        error
-      );
-
-      alert(
-        "Could not reset the training plan. Please try again."
-      );
-    } finally {
-      setIsResetting(false);
     }
   }
 
@@ -1279,28 +1195,6 @@ export default function Home() {
 
   return (
     <main className="dashboard">
-      {screen === "dashboard" && (
-        <button
-          onClick={() => setSettingsOpen(true)}
-          aria-label="Open settings"
-          style={{
-            position: "fixed",
-            top: "22px",
-            right: "22px",
-            zIndex: 40,
-            width: "46px",
-            height: "46px",
-            borderRadius: "50%",
-            border: "1px solid #d8d7cf",
-            background: "#ffffff",
-            cursor: "pointer",
-            fontSize: "20px",
-            boxShadow: "0 8px 24px rgba(0,0,0,.08)",
-          }}
-        >
-          ⚙
-        </button>
-      )}
       <aside className="sidebar">
         <div className="brand">
           <span>▲</span> TRI//COACH
@@ -1635,16 +1529,9 @@ export default function Home() {
 
           <div className="weekGrid">
             {(trainingPlan?.days ?? []).map((workout) => (
-              <button
+              <div
                 className="dayCard"
                 key={workout.day}
-                onClick={() => setSelectedWorkout(workout)}
-                style={{
-                  textAlign: "left",
-                  cursor: "pointer",
-                  width: "100%",
-                  border: "1px solid #d8d7cf",
-                }}
               >
                 <div className="dayTop">
                   <strong>{workout.day.slice(0, 3)}</strong>
@@ -1657,7 +1544,7 @@ export default function Home() {
                     ? "Rest"
                     : `${workout.durationMinutes} min`}
                 </p>
-              </button>
+              </div>
             ))}
           </div>
 
@@ -1870,325 +1757,6 @@ export default function Home() {
           </section>
         )}
       </section>
-      {selectedWorkout && (
-        <div
-          onClick={() => setSelectedWorkout(null)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(20, 22, 18, .52)",
-            zIndex: 90,
-            display: "grid",
-            placeItems: "center",
-            padding: "20px",
-            overflowY: "auto",
-          }}
-        >
-          <section
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: "100%",
-              maxWidth: "720px",
-              background: "#f8f7f2",
-              borderRadius: "24px",
-              padding: "28px",
-              boxShadow: "0 30px 90px rgba(0,0,0,.25)",
-              maxHeight: "90vh",
-              overflowY: "auto",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                gap: "20px",
-                alignItems: "flex-start",
-              }}
-            >
-              <div>
-                <div className="eyebrow">
-                  {selectedWorkout.day.toUpperCase()} ·{" "}
-                  {selectedWorkout.sport.toUpperCase()}
-                </div>
-
-                <h2
-                  style={{
-                    fontSize: "2.6rem",
-                    lineHeight: .95,
-                    letterSpacing: "-.05em",
-                    margin: ".6rem 0 .8rem",
-                  }}
-                >
-                  {selectedWorkout.title}
-                </h2>
-
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    flexWrap: "wrap",
-                    marginBottom: "1.5rem",
-                  }}
-                >
-                  <span className="sportBadge">
-                    {selectedWorkout.durationMinutes === 0
-                      ? "REST"
-                      : `${selectedWorkout.durationMinutes} MIN`}
-                  </span>
-
-                  <span
-                    style={{
-                      border: "1px solid #d8d7cf",
-                      borderRadius: "8px",
-                      padding: ".4rem .6rem",
-                      fontSize: ".72rem",
-                      fontWeight: 900,
-                    }}
-                  >
-                    {selectedWorkout.intensity}
-                  </span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setSelectedWorkout(null)}
-                aria-label="Close workout details"
-                style={{
-                  border: 0,
-                  background: "transparent",
-                  fontSize: "28px",
-                  cursor: "pointer",
-                }}
-              >
-                ×
-              </button>
-            </div>
-
-            <div
-              className="whyBox"
-              style={{
-                background: "#ecebe4",
-                color: "#2c2f29",
-                marginBottom: "1.5rem",
-              }}
-            >
-              <span
-                style={{
-                  color: "#6f7268",
-                }}
-              >
-                PURPOSE
-              </span>
-              {selectedWorkout.purpose}
-            </div>
-
-            {selectedWorkout.details?.length > 0 && (
-              <div
-                style={{
-                  marginBottom: "1.8rem",
-                }}
-              >
-                <div className="eyebrow">
-                  WORKOUT
-                </div>
-
-                <div
-                  className="workoutSteps"
-                  style={{
-                    marginTop: ".7rem",
-                  }}
-                >
-                  {selectedWorkout.details.map((detail, index) => (
-                    <div key={`${detail}-${index}`}>
-                      <b>
-                        {String(index + 1).padStart(2, "0")}
-                      </b>
-
-                      <span>
-                        <strong>{detail}</strong>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "10px",
-              }}
-            >
-              <button
-                className="primary"
-                onClick={() => {
-                  setFeedbackOpen(true);
-                  setSelectedWorkout(null);
-                }}
-              >
-                Log workout
-              </button>
-
-              <button
-                className="secondary"
-                onClick={() => {
-                  setSelectedWorkout(null);
-                  sendMessage(
-                    `I want to adapt my ${selectedWorkout.day} workout: ${selectedWorkout.title}.`
-                  );
-                }}
-              >
-                Ask coach to adapt
-              </button>
-            </div>
-
-            <p
-              style={{
-                marginTop: "18px",
-                marginBottom: 0,
-                color: "#85877f",
-                fontSize: "12px",
-                lineHeight: 1.5,
-              }}
-            >
-              TriCoach uses the purpose of the session, not just the
-              duration, when adapting your week.
-            </p>
-          </section>
-        </div>
-      )}
-
-      {settingsOpen && (
-        <div
-          onClick={() => setSettingsOpen(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(20, 22, 18, .45)",
-            zIndex: 100,
-            display: "grid",
-            placeItems: "center",
-            padding: "20px",
-          }}
-        >
-          <section
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: "100%",
-              maxWidth: "480px",
-              background: "#f8f7f2",
-              borderRadius: "24px",
-              padding: "28px",
-              boxShadow:
-                "0 30px 80px rgba(0,0,0,.22)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                gap: "20px",
-                alignItems: "flex-start",
-                marginBottom: "28px",
-              }}
-            >
-              <div>
-                <div className="eyebrow">
-                  ACCOUNT
-                </div>
-
-                <h2
-                  style={{
-                    marginTop: ".4rem",
-                    marginBottom: ".3rem",
-                  }}
-                >
-                  Settings
-                </h2>
-
-                <p
-                  style={{
-                    color: "#6f7268",
-                    margin: 0,
-                  }}
-                >
-                  {userEmail || "TriCoach athlete"}
-                </p>
-              </div>
-
-              <button
-                onClick={() =>
-                  setSettingsOpen(false)
-                }
-                style={{
-                  border: 0,
-                  background: "transparent",
-                  fontSize: "24px",
-                  cursor: "pointer",
-                }}
-              >
-                ×
-              </button>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gap: "10px",
-              }}
-            >
-              <button
-                className="primary full"
-                onClick={editAthleteProfile}
-              >
-                Edit athlete profile
-              </button>
-
-              <button
-                className="secondary full"
-                disabled={isResetting}
-                onClick={resetTrainingPlan}
-              >
-                {isResetting
-                  ? "Resetting..."
-                  : "Reset training plan"}
-              </button>
-
-              <button
-                onClick={logOut}
-                style={{
-                  marginTop: "10px",
-                  border: "1px solid #d8d7cf",
-                  background: "transparent",
-                  borderRadius: "12px",
-                  padding: "14px",
-                  cursor: "pointer",
-                  fontWeight: 800,
-                }}
-              >
-                Log out
-              </button>
-            </div>
-
-            <p
-              style={{
-                marginTop: "22px",
-                marginBottom: 0,
-                fontSize: "12px",
-                lineHeight: 1.5,
-                color: "#85877f",
-              }}
-            >
-              Resetting your training plan keeps
-              your account and athlete profile.
-              Logging out does not delete your
-              data from TriCoach.
-            </p>
-          </section>
-        </div>
-      )}
-
     </main>
   );
 }
