@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { createClient } from "@/lib/supabase";
 
 type Goal = "Sprint" | "Olympic" | "70.3" | "Ironman";
 type Discipline = "Swimming" | "Cycling" | "Running";
@@ -34,33 +33,6 @@ type TrainingPlan = {
   totalHours: number;
   focus: string;
   days: TrainingPlanDay[];
-};
-
-type WorkoutFeedback = {
-  id: string;
-  day: string;
-  sport: string;
-  title: string;
-  status: "Completed" | "Skipped" | "Modified";
-  rpe: number | null;
-  feeling: "Great" | "Normal" | "Heavy" | null;
-  comment: string;
-  completedAt: string;
-};
-
-type WeeklyReview = {
-  headline: string;
-  summary: string;
-  completedSessions: number;
-  skippedSessions: number;
-  averageRpe: number | null;
-  loadDecision:
-    | "Increase slightly"
-    | "Maintain"
-    | "Reduce";
-  positives: string[];
-  concerns: string[];
-  nextWeekFocus: string;
 };
 
 const starterWeek = [
@@ -99,23 +71,6 @@ export default function Home() {
   const [trainingPlan, setTrainingPlan] = useState<TrainingPlan | null>(null);
   const [hasRestoredData, setHasRestoredData] = useState(false);
 
-  const [workoutHistory, setWorkoutHistory] = useState<WorkoutFeedback[]>([]);
-  const [planHistory, setPlanHistory] = useState<TrainingPlan[]>([]);
-  const [weeklyReview, setWeeklyReview] = useState<WeeklyReview | null>(null);
-  const [isNextWeekLoading, setIsNextWeekLoading] = useState(false);
-
-  const [supabase] = useState(() => createClient());
-  const [userId, setUserId] = useState<string | null>(null);
-  const [dbReady, setDbReady] = useState(false);
-
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [feedbackStatus, setFeedbackStatus] =
-    useState<"Completed" | "Skipped" | "Modified">("Completed");
-  const [feedbackRpe, setFeedbackRpe] = useState(5);
-  const [feedbackFeeling, setFeedbackFeeling] =
-    useState<"Great" | "Normal" | "Heavy">("Normal");
-  const [feedbackComment, setFeedbackComment] = useState("");
-
   const [chat, setChat] = useState<ChatMessage[]>([
     {
       role: "coach",
@@ -125,115 +80,24 @@ export default function Home() {
   ]);
 
   useEffect(() => {
-    async function restoreTriCoach() {
-      try {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+    try {
+      const savedAthlete = localStorage.getItem("tricoach-athlete");
+      const savedPlan = localStorage.getItem("tricoach-plan");
 
-        if (userError) {
-          console.error("Could not verify Supabase user:", userError);
-        }
-
-        if (user) {
-          setUserId(user.id);
-
-          const { data: profileData, error: profileError } =
-            await supabase
-              .from("profiles")
-              .select("*")
-              .eq("user_id", user.id)
-              .maybeSingle();
-
-          if (profileError) {
-            console.error("Could not load profile:", profileError);
-          }
-
-          const { data: trainingData, error: trainingError } =
-            await supabase
-              .from("training_state")
-              .select("*")
-              .eq("user_id", user.id)
-              .maybeSingle();
-
-          if (trainingError) {
-            console.error("Could not load training state:", trainingError);
-          }
-
-          if (profileData) {
-            setAthlete({
-              name: profileData.name ?? "",
-              goal: profileData.goal ?? "70.3",
-              raceDate: profileData.race_date ?? "",
-              hoursPerWeek:
-                profileData.hours_per_week?.toString() ?? "8",
-              weakestDiscipline:
-                profileData.weakest_discipline ?? "Swimming",
-            });
-          }
-
-          if (trainingData?.active_plan) {
-            setTrainingPlan(trainingData.active_plan);
-            setScreen("dashboard");
-          }
-
-          if (trainingData?.workout_history) {
-            setWorkoutHistory(trainingData.workout_history);
-          }
-
-          if (trainingData?.plan_history) {
-            setPlanHistory(trainingData.plan_history);
-          }
-
-          if (trainingData?.weekly_review) {
-            setWeeklyReview(trainingData.weekly_review);
-          }
-
-          setDbReady(true);
-        } else {
-          // Local fallback for current development mode.
-          const savedAthlete =
-            localStorage.getItem("tricoach-athlete");
-          const savedPlan =
-            localStorage.getItem("tricoach-plan");
-          const savedHistory =
-            localStorage.getItem("tricoach-workout-history");
-          const savedPlanHistory =
-            localStorage.getItem("tricoach-plan-history");
-          const savedWeeklyReview =
-            localStorage.getItem("tricoach-weekly-review");
-
-          if (savedAthlete) {
-            setAthlete(JSON.parse(savedAthlete));
-          }
-
-          if (savedPlan) {
-            setTrainingPlan(JSON.parse(savedPlan));
-            setScreen("dashboard");
-          }
-
-          if (savedHistory) {
-            setWorkoutHistory(JSON.parse(savedHistory));
-          }
-
-          if (savedPlanHistory) {
-            setPlanHistory(JSON.parse(savedPlanHistory));
-          }
-
-          if (savedWeeklyReview) {
-            setWeeklyReview(JSON.parse(savedWeeklyReview));
-          }
-        }
-      } catch (error) {
-        console.error("Could not restore TriCoach data:", error);
-      } finally {
-        setHasRestoredData(true);
+      if (savedAthlete) {
+        setAthlete(JSON.parse(savedAthlete));
       }
-    }
 
-    restoreTriCoach();
-  }, [supabase]);
+      if (savedPlan) {
+        setTrainingPlan(JSON.parse(savedPlan));
+        setScreen("dashboard");
+      }
+    } catch (error) {
+      console.error("Could not restore TriCoach data:", error);
+    } finally {
+      setHasRestoredData(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!hasRestoredData) return;
@@ -242,37 +106,7 @@ export default function Home() {
       "tricoach-athlete",
       JSON.stringify(athlete)
     );
-
-    if (userId && dbReady) {
-      supabase
-        .from("profiles")
-        .upsert(
-          {
-            user_id: userId,
-            name: athlete.name,
-            goal: athlete.goal,
-            race_date: athlete.raceDate || null,
-            hours_per_week: Number(athlete.hoursPerWeek),
-            weakest_discipline: athlete.weakestDiscipline,
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: "user_id",
-          }
-        )
-        .then(({ error }) => {
-          if (error) {
-            console.error("Could not save profile:", error);
-          }
-        });
-    }
-  }, [
-    athlete,
-    hasRestoredData,
-    userId,
-    dbReady,
-    supabase,
-  ]);
+  }, [athlete, hasRestoredData]);
 
   useEffect(() => {
     if (!hasRestoredData) return;
@@ -283,71 +117,7 @@ export default function Home() {
         JSON.stringify(trainingPlan)
       );
     }
-
-    if (userId && dbReady) {
-      supabase
-        .from("training_state")
-        .upsert(
-          {
-            user_id: userId,
-            active_plan: trainingPlan,
-            workout_history: workoutHistory,
-            plan_history: planHistory,
-            weekly_review: weeklyReview,
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: "user_id",
-          }
-        )
-        .then(({ error }) => {
-          if (error) {
-            console.error(
-              "Could not save training state:",
-              error
-            );
-          }
-        });
-    }
-  }, [
-    trainingPlan,
-    workoutHistory,
-    planHistory,
-    weeklyReview,
-    hasRestoredData,
-    userId,
-    dbReady,
-    supabase,
-  ]);
-
-  useEffect(() => {
-    if (!hasRestoredData) return;
-
-    localStorage.setItem(
-      "tricoach-workout-history",
-      JSON.stringify(workoutHistory)
-    );
-  }, [workoutHistory, hasRestoredData]);
-
-  useEffect(() => {
-    if (!hasRestoredData) return;
-
-    localStorage.setItem(
-      "tricoach-plan-history",
-      JSON.stringify(planHistory)
-    );
-  }, [planHistory, hasRestoredData]);
-
-  useEffect(() => {
-    if (!hasRestoredData) return;
-
-    if (weeklyReview) {
-      localStorage.setItem(
-        "tricoach-weekly-review",
-        JSON.stringify(weeklyReview)
-      );
-    }
-  }, [weeklyReview, hasRestoredData]);
+  }, [trainingPlan, hasRestoredData]);
 
   const today = useMemo(() => {
     const day = new Date().getDay();
@@ -404,7 +174,6 @@ export default function Home() {
           message: content,
           athlete,
           trainingPlan,
-          workoutHistory,
           history: oldChat,
         }),
       });
@@ -439,105 +208,6 @@ export default function Home() {
       ]);
     } finally {
       setIsCoachThinking(false);
-    }
-  }
-
-  function saveWorkoutFeedback() {
-    const feedback: WorkoutFeedback = {
-      id: `${Date.now()}`,
-      day: today[0],
-      sport: today[1],
-      title: today[2],
-      status: feedbackStatus,
-      rpe:
-        feedbackStatus === "Skipped"
-          ? null
-          : feedbackRpe,
-      feeling:
-        feedbackStatus === "Skipped"
-          ? null
-          : feedbackFeeling,
-      comment: feedbackComment.trim(),
-      completedAt: new Date().toISOString(),
-    };
-
-    setWorkoutHistory((current) => [
-      ...current,
-      feedback,
-    ]);
-
-    setFeedbackOpen(false);
-    setFeedbackStatus("Completed");
-    setFeedbackRpe(5);
-    setFeedbackFeeling("Normal");
-    setFeedbackComment("");
-  }
-
-  async function generateNextWeek() {
-    if (!trainingPlan) {
-      alert("No active training plan found.");
-      return;
-    }
-
-    if (workoutHistory.length === 0) {
-      const continueAnyway = window.confirm(
-        "You have not logged any workouts yet. Generate next week anyway?"
-      );
-
-      if (!continueAnyway) return;
-    }
-
-    setIsNextWeekLoading(true);
-
-    try {
-      const response = await fetch(
-        "/api/next-week",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            athlete,
-            currentPlan: trainingPlan,
-            workoutHistory,
-            planHistory,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.error ||
-            "Could not generate next week"
-        );
-      }
-
-      setPlanHistory((current) => [
-        ...current,
-        trainingPlan,
-      ]);
-
-      setWeeklyReview(data.review);
-      setTrainingPlan(data.nextPlan);
-
-      // Start a clean feedback log for the new week.
-      setWorkoutHistory([]);
-
-    } catch (error) {
-      console.error(
-        "Next week generation error:",
-        error
-      );
-
-      alert(
-        "TriCoach could not generate the next week. Please try again."
-      );
-    } finally {
-      setIsNextWeekLoading(false);
     }
   }
 
@@ -969,11 +639,8 @@ export default function Home() {
             </div>
 
             <div className="actionRow">
-              <button
-                className="primary"
-                onClick={() => setFeedbackOpen(true)}
-              >
-                Log workout
+              <button className="primary">
+                Start workout
               </button>
 
               <button
@@ -1068,117 +735,6 @@ export default function Home() {
           </div>
         </div>
 
-        {feedbackOpen && (
-          <section className="questionCard" style={{ marginTop: "1.5rem" }}>
-            <div className="eyebrow">WORKOUT FEEDBACK</div>
-
-            <h1 style={{ fontSize: "2.4rem" }}>
-              How did today go?
-            </h1>
-
-            <div className="choiceGrid three">
-              {(["Completed", "Modified", "Skipped"] as const).map(
-                (status) => (
-                  <button
-                    key={status}
-                    className={
-                      feedbackStatus === status
-                        ? "choice selected"
-                        : "choice"
-                    }
-                    onClick={() =>
-                      setFeedbackStatus(status)
-                    }
-                  >
-                    <strong>{status}</strong>
-                  </button>
-                )
-              )}
-            </div>
-
-            {feedbackStatus !== "Skipped" && (
-              <>
-                <div style={{ marginTop: "1.5rem" }}>
-                  <div className="eyebrow">RPE</div>
-
-                  <div className="bigNumber">
-                    {feedbackRpe}/10
-                  </div>
-
-                  <input
-                    type="range"
-                    min="1"
-                    max="10"
-                    value={feedbackRpe}
-                    onChange={(e) =>
-                      setFeedbackRpe(
-                        Number(e.target.value)
-                      )
-                    }
-                    style={{ width: "100%" }}
-                  />
-                </div>
-
-                <div
-                  className="choiceGrid three"
-                  style={{ marginTop: "1.5rem" }}
-                >
-                  {(["Great", "Normal", "Heavy"] as const).map(
-                    (feeling) => (
-                      <button
-                        key={feeling}
-                        className={
-                          feedbackFeeling === feeling
-                            ? "choice selected"
-                            : "choice"
-                        }
-                        onClick={() =>
-                          setFeedbackFeeling(feeling)
-                        }
-                      >
-                        <strong>{feeling}</strong>
-                      </button>
-                    )
-                  )}
-                </div>
-              </>
-            )}
-
-            <textarea
-              className="field"
-              style={{
-                marginTop: "1.5rem",
-                minHeight: "110px",
-                resize: "vertical",
-              }}
-              value={feedbackComment}
-              placeholder="Anything your coach should know?"
-              onChange={(e) =>
-                setFeedbackComment(e.target.value)
-              }
-            />
-
-            <div
-              className="actionRow"
-              style={{ marginTop: "1.5rem" }}
-            >
-              <button
-                className="primary"
-                onClick={saveWorkoutFeedback}
-              >
-                Save feedback
-              </button>
-
-              <button
-                className="secondary"
-                onClick={() => setFeedbackOpen(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </section>
-        )}
-
         <section className="weekSection">
           <div className="sectionTitle">
             <div>
@@ -1216,215 +772,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-
-          <div
-            className="actionRow"
-            style={{
-              marginTop: "1.2rem",
-            }}
-          >
-            <button
-              className="primary"
-              disabled={isNextWeekLoading}
-              onClick={generateNextWeek}
-            >
-              {isNextWeekLoading
-                ? "Reviewing your week..."
-                : "Generate next week →"}
-            </button>
-
-            <span
-              style={{
-                alignSelf: "center",
-                color: "#6f7268",
-                fontSize: ".85rem",
-              }}
-            >
-              TriCoach will review what
-              actually happened before
-              progressing the plan.
-            </span>
-          </div>
         </section>
-
-        {weeklyReview && (
-          <section className="weekSection">
-            <div className="sectionTitle">
-              <div>
-                <span className="eyebrow">
-                  COACH REVIEW
-                </span>
-
-                <h2>
-                  {weeklyReview.headline}
-                </h2>
-              </div>
-
-              <span>
-                {weeklyReview.loadDecision}
-              </span>
-            </div>
-
-            <div
-              className="todayCard"
-              style={{
-                minHeight: "auto",
-                marginTop: "1rem",
-              }}
-            >
-              <p
-                style={{
-                  fontSize: "1.05rem",
-                  lineHeight: 1.6,
-                }}
-              >
-                {weeklyReview.summary}
-              </p>
-
-              <div className="metricRow">
-                <div>
-                  <small>COMPLETED</small>
-                  <strong>
-                    {
-                      weeklyReview.completedSessions
-                    }
-                  </strong>
-                </div>
-
-                <div>
-                  <small>SKIPPED</small>
-                  <strong>
-                    {
-                      weeklyReview.skippedSessions
-                    }
-                  </strong>
-                </div>
-
-                <div>
-                  <small>AVG RPE</small>
-                  <strong>
-                    {weeklyReview.averageRpe ??
-                      "—"}
-                  </strong>
-                </div>
-              </div>
-
-              <div
-                className="workoutSteps"
-                style={{
-                  marginBottom: 0,
-                }}
-              >
-                <div>
-                  <b>+</b>
-
-                  <span>
-                    <strong>
-                      What went well
-                    </strong>
-
-                    <small>
-                      {weeklyReview.positives.length
-                        ? weeklyReview.positives.join(
-                            " · "
-                          )
-                        : "Keep building consistency."}
-                    </small>
-                  </span>
-                </div>
-
-                <div>
-                  <b>!</b>
-
-                  <span>
-                    <strong>
-                      What I'm watching
-                    </strong>
-
-                    <small>
-                      {weeklyReview.concerns.length
-                        ? weeklyReview.concerns.join(
-                            " · "
-                          )
-                        : "No major concerns."}
-                    </small>
-                  </span>
-                </div>
-
-                <div>
-                  <b>→</b>
-
-                  <span>
-                    <strong>
-                      Next-week focus
-                    </strong>
-
-                    <small>
-                      {
-                        weeklyReview.nextWeekFocus
-                      }
-                    </small>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {workoutHistory.length > 0 && (
-          <section className="weekSection">
-            <div className="sectionTitle">
-              <div>
-                <span className="eyebrow">
-                  TRAINING HISTORY
-                </span>
-
-                <h2>This week's feedback</h2>
-              </div>
-
-              <span>
-                {workoutHistory.filter(
-                  (item) =>
-                    item.status === "Completed"
-                ).length} completed ·{" "}
-                {workoutHistory.filter(
-                  (item) =>
-                    item.status === "Skipped"
-                ).length} skipped
-              </span>
-            </div>
-
-            <div className="weekGrid">
-              {workoutHistory
-                .slice(-7)
-                .map((item) => (
-                  <div
-                    className="dayCard"
-                    key={item.id}
-                  >
-                    <div className="dayTop">
-                      <strong>{item.day}</strong>
-                      <span>{item.status}</span>
-                    </div>
-
-                    <h3>{item.title}</h3>
-
-                    <p>
-                      {item.rpe
-                        ? `RPE ${item.rpe}/10 · ${item.feeling}`
-                        : "No training completed"}
-                    </p>
-
-                    {item.comment && (
-                      <p style={{ marginTop: ".6rem" }}>
-                        {item.comment}
-                      </p>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </section>
-        )}
       </section>
     </main>
   );

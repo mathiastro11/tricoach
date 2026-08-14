@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { createClient } from "@/lib/supabase";
 
 type Goal = "Sprint" | "Olympic" | "70.3" | "Ironman";
 type Discipline = "Swimming" | "Cycling" | "Running";
@@ -104,10 +103,6 @@ export default function Home() {
   const [weeklyReview, setWeeklyReview] = useState<WeeklyReview | null>(null);
   const [isNextWeekLoading, setIsNextWeekLoading] = useState(false);
 
-  const [supabase] = useState(() => createClient());
-  const [userId, setUserId] = useState<string | null>(null);
-  const [dbReady, setDbReady] = useState(false);
-
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackStatus, setFeedbackStatus] =
     useState<"Completed" | "Skipped" | "Modified">("Completed");
@@ -125,115 +120,39 @@ export default function Home() {
   ]);
 
   useEffect(() => {
-    async function restoreTriCoach() {
-      try {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+    try {
+      const savedAthlete = localStorage.getItem("tricoach-athlete");
+      const savedPlan = localStorage.getItem("tricoach-plan");
+      const savedHistory = localStorage.getItem("tricoach-workout-history");
+      const savedPlanHistory = localStorage.getItem("tricoach-plan-history");
+      const savedWeeklyReview = localStorage.getItem("tricoach-weekly-review");
 
-        if (userError) {
-          console.error("Could not verify Supabase user:", userError);
-        }
-
-        if (user) {
-          setUserId(user.id);
-
-          const { data: profileData, error: profileError } =
-            await supabase
-              .from("profiles")
-              .select("*")
-              .eq("user_id", user.id)
-              .maybeSingle();
-
-          if (profileError) {
-            console.error("Could not load profile:", profileError);
-          }
-
-          const { data: trainingData, error: trainingError } =
-            await supabase
-              .from("training_state")
-              .select("*")
-              .eq("user_id", user.id)
-              .maybeSingle();
-
-          if (trainingError) {
-            console.error("Could not load training state:", trainingError);
-          }
-
-          if (profileData) {
-            setAthlete({
-              name: profileData.name ?? "",
-              goal: profileData.goal ?? "70.3",
-              raceDate: profileData.race_date ?? "",
-              hoursPerWeek:
-                profileData.hours_per_week?.toString() ?? "8",
-              weakestDiscipline:
-                profileData.weakest_discipline ?? "Swimming",
-            });
-          }
-
-          if (trainingData?.active_plan) {
-            setTrainingPlan(trainingData.active_plan);
-            setScreen("dashboard");
-          }
-
-          if (trainingData?.workout_history) {
-            setWorkoutHistory(trainingData.workout_history);
-          }
-
-          if (trainingData?.plan_history) {
-            setPlanHistory(trainingData.plan_history);
-          }
-
-          if (trainingData?.weekly_review) {
-            setWeeklyReview(trainingData.weekly_review);
-          }
-
-          setDbReady(true);
-        } else {
-          // Local fallback for current development mode.
-          const savedAthlete =
-            localStorage.getItem("tricoach-athlete");
-          const savedPlan =
-            localStorage.getItem("tricoach-plan");
-          const savedHistory =
-            localStorage.getItem("tricoach-workout-history");
-          const savedPlanHistory =
-            localStorage.getItem("tricoach-plan-history");
-          const savedWeeklyReview =
-            localStorage.getItem("tricoach-weekly-review");
-
-          if (savedAthlete) {
-            setAthlete(JSON.parse(savedAthlete));
-          }
-
-          if (savedPlan) {
-            setTrainingPlan(JSON.parse(savedPlan));
-            setScreen("dashboard");
-          }
-
-          if (savedHistory) {
-            setWorkoutHistory(JSON.parse(savedHistory));
-          }
-
-          if (savedPlanHistory) {
-            setPlanHistory(JSON.parse(savedPlanHistory));
-          }
-
-          if (savedWeeklyReview) {
-            setWeeklyReview(JSON.parse(savedWeeklyReview));
-          }
-        }
-      } catch (error) {
-        console.error("Could not restore TriCoach data:", error);
-      } finally {
-        setHasRestoredData(true);
+      if (savedAthlete) {
+        setAthlete(JSON.parse(savedAthlete));
       }
-    }
 
-    restoreTriCoach();
-  }, [supabase]);
+      if (savedPlan) {
+        setTrainingPlan(JSON.parse(savedPlan));
+        setScreen("dashboard");
+      }
+
+      if (savedHistory) {
+        setWorkoutHistory(JSON.parse(savedHistory));
+      }
+
+      if (savedPlanHistory) {
+        setPlanHistory(JSON.parse(savedPlanHistory));
+      }
+
+      if (savedWeeklyReview) {
+        setWeeklyReview(JSON.parse(savedWeeklyReview));
+      }
+    } catch (error) {
+      console.error("Could not restore TriCoach data:", error);
+    } finally {
+      setHasRestoredData(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!hasRestoredData) return;
@@ -242,37 +161,7 @@ export default function Home() {
       "tricoach-athlete",
       JSON.stringify(athlete)
     );
-
-    if (userId && dbReady) {
-      supabase
-        .from("profiles")
-        .upsert(
-          {
-            user_id: userId,
-            name: athlete.name,
-            goal: athlete.goal,
-            race_date: athlete.raceDate || null,
-            hours_per_week: Number(athlete.hoursPerWeek),
-            weakest_discipline: athlete.weakestDiscipline,
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: "user_id",
-          }
-        )
-        .then(({ error }) => {
-          if (error) {
-            console.error("Could not save profile:", error);
-          }
-        });
-    }
-  }, [
-    athlete,
-    hasRestoredData,
-    userId,
-    dbReady,
-    supabase,
-  ]);
+  }, [athlete, hasRestoredData]);
 
   useEffect(() => {
     if (!hasRestoredData) return;
@@ -283,42 +172,7 @@ export default function Home() {
         JSON.stringify(trainingPlan)
       );
     }
-
-    if (userId && dbReady) {
-      supabase
-        .from("training_state")
-        .upsert(
-          {
-            user_id: userId,
-            active_plan: trainingPlan,
-            workout_history: workoutHistory,
-            plan_history: planHistory,
-            weekly_review: weeklyReview,
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: "user_id",
-          }
-        )
-        .then(({ error }) => {
-          if (error) {
-            console.error(
-              "Could not save training state:",
-              error
-            );
-          }
-        });
-    }
-  }, [
-    trainingPlan,
-    workoutHistory,
-    planHistory,
-    weeklyReview,
-    hasRestoredData,
-    userId,
-    dbReady,
-    supabase,
-  ]);
+  }, [trainingPlan, hasRestoredData]);
 
   useEffect(() => {
     if (!hasRestoredData) return;
