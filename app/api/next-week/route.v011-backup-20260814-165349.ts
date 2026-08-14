@@ -5,123 +5,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-type ArchiveWeek = {
-  plan?: {
-    totalHours?: number;
-  };
-  feedback?: Array<{
-    status?: string;
-    rpe?: number | null;
-    feeling?: string | null;
-    actualDurationMinutes?: number | null;
-    plannedDurationMinutes?: number | null;
-  }>;
-};
-
-function weeksUntilRace(raceDate?: string) {
-  if (!raceDate) return null;
-
-  const race = new Date(`${raceDate}T12:00:00`);
-  const now = new Date();
-
-  return Math.max(
-    0,
-    Math.ceil(
-      (race.getTime() - now.getTime()) /
-        (7 * 86400000)
-    )
-  );
-}
-
-function getTrainingPhase(raceDate?: string) {
-  const weeks = weeksUntilRace(raceDate);
-
-  if (weeks === null) return "Base";
-  if (weeks <= 2) return "Taper";
-  if (weeks <= 4) return "Peak";
-  if (weeks <= 12) return "Build";
-
-  return "Base";
-}
-
-function summarizeTrainingTrend(
-  trainingArchive: ArchiveWeek[] = [],
-  currentFeedback: ArchiveWeek["feedback"] = []
-) {
-  const recentWeeks = trainingArchive.slice(-3);
-
-  const feedback = [
-    ...recentWeeks.flatMap(
-      (week) => week.feedback ?? []
-    ),
-    ...(currentFeedback ?? []),
-  ];
-
-  const completed = feedback.filter(
-    (item) =>
-      item.status === "Completed" ||
-      item.status === "Modified"
-  );
-
-  const skipped = feedback.filter(
-    (item) => item.status === "Skipped"
-  );
-
-  const rpes = completed
-    .map((item) => item.rpe)
-    .filter(
-      (value): value is number =>
-        typeof value === "number"
-    );
-
-  const averageRpe =
-    rpes.length > 0
-      ? rpes.reduce((a, b) => a + b, 0) /
-        rpes.length
-      : null;
-
-  const heavySessions = completed.filter(
-    (item) =>
-      (item.rpe ?? 0) >= 8 ||
-      item.feeling === "Heavy"
-  ).length;
-
-  const plannedMinutes = feedback.reduce(
-    (sum, item) =>
-      sum + (item.plannedDurationMinutes ?? 0),
-    0
-  );
-
-  const actualMinutes = feedback.reduce(
-    (sum, item) =>
-      sum + (item.actualDurationMinutes ?? 0),
-    0
-  );
-
-  const completionRate =
-    plannedMinutes > 0
-      ? actualMinutes / plannedMinutes
-      : null;
-
-  return {
-    weeksAnalyzed: recentWeeks.length,
-    sessionsAnalyzed: feedback.length,
-    completedSessions: completed.length,
-    skippedSessions: skipped.length,
-    averageRpe:
-      averageRpe === null
-        ? null
-        : Number(averageRpe.toFixed(1)),
-    heavySessions,
-    completionRate:
-      completionRate === null
-        ? null
-        : Number(
-            (completionRate * 100).toFixed(0)
-          ),
-  };
-}
-
 export async function POST(
   request: Request
 ) {
@@ -133,20 +16,7 @@ export async function POST(
       currentPlan,
       workoutHistory = [],
       planHistory = [],
-      trainingArchive = [],
     } = body;
-
-    const trainingPhase =
-      getTrainingPhase(athlete?.raceDate);
-
-    const weeksRemaining =
-      weeksUntilRace(athlete?.raceDate);
-
-    const trainingTrend =
-      summarizeTrainingTrend(
-        trainingArchive,
-        workoutHistory
-      );
 
     if (!athlete || !currentPlan) {
       return NextResponse.json(
@@ -191,26 +61,6 @@ ${JSON.stringify(
   2
 )}
 
-CURRENT TRAINING PHASE:
-${trainingPhase}
-
-WEEKS UNTIL RACE:
-${weeksRemaining ?? "Unknown"}
-
-MULTI-WEEK TRAINING TREND:
-${JSON.stringify(
-  trainingTrend,
-  null,
-  2
-)}
-
-ARCHIVED TRAINING WEEKS:
-${JSON.stringify(
-  trainingArchive.slice(-3),
-  null,
-  2
-)}
-
 YOUR JOB:
 
 1. Review the week honestly.
@@ -221,39 +71,6 @@ YOUR JOB:
    - reduce
 4. Create the next 7-day plan.
 5. Explain the main reason for the decision.
-
-TRAINING PHASE LOGIC:
-
-BASE:
-- Emphasize aerobic consistency and technical development.
-- Build durability gradually.
-- Keep intensity limited and purposeful.
-
-BUILD:
-- Progress race-specific endurance.
-- Introduce controlled quality.
-- Maintain enough recovery to absorb training.
-
-PEAK:
-- Prioritize race-specific key sessions.
-- Avoid large volume increases.
-- Fitness should be expressed, not forced.
-
-TAPER:
-- Reduce overall volume and fatigue.
-- Preserve some short controlled intensity.
-- Arrive fresh rather than chasing fitness.
-
-TREND RULES:
-
-- Use the multi-week trend before changing load.
-- If completion has been poor, do not reward that with more volume.
-- If several recent sessions are RPE 8+ or Heavy, be cautious.
-- A single hard day should not trigger a full deload.
-- Several weeks of stable completion and manageable RPE may justify a small progression.
-- Never increase volume aggressively.
-- Do not exceed the athlete's realistic time availability.
-- Do not let phase progression override recovery signals.
 
 TRAINING PRINCIPLES:
 

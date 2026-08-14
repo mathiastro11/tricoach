@@ -171,48 +171,6 @@ function attachWeekDates(plan: TrainingPlan): TrainingPlan {
   };
 }
 
-function getWeeksUntilRace(raceDate?: string) {
-  if (!raceDate) return null;
-
-  const race = new Date(`${raceDate}T12:00:00`);
-  const now = new Date();
-
-  return Math.max(
-    0,
-    Math.ceil(
-      (race.getTime() - now.getTime()) /
-        (7 * 86400000)
-    )
-  );
-}
-
-function getTrainingPhaseUI(raceDate?: string) {
-  const weeks = getWeeksUntilRace(raceDate);
-
-  if (weeks === null) return "Base";
-  if (weeks <= 2) return "Taper";
-  if (weeks <= 4) return "Peak";
-  if (weeks <= 12) return "Build";
-
-  return "Base";
-}
-
-function getPhaseDescription(phase: string) {
-  if (phase === "Taper") {
-    return "Reduce fatigue while keeping enough intensity to stay race-ready.";
-  }
-
-  if (phase === "Peak") {
-    return "Prioritize race-specific sessions and protect recovery between key workouts.";
-  }
-
-  if (phase === "Build") {
-    return "Develop race-specific endurance gradually while maintaining consistency.";
-  }
-
-  return "Build aerobic consistency, technical skill and durable training habits.";
-}
-
 export default function Home() {
   const [screen, setScreen] =
     useState<"home" | "onboarding" | "dashboard">("home");
@@ -618,12 +576,6 @@ export default function Home() {
       );
     }
   }, [weeklyReview, hasRestoredData]);
-
-  const weeksToRace =
-    getWeeksUntilRace(athlete.raceDate);
-
-  const trainingPhase =
-    getTrainingPhaseUI(athlete.raceDate);
 
   const today = useMemo(() => {
     const day = new Date().getDay();
@@ -1668,82 +1620,6 @@ export default function Home() {
                 </>
               );
             })()}
-          </section>
-        )}
-
-        {athlete.raceDate && (
-          <section
-            className="todayCard"
-            style={{
-              minHeight: "auto",
-              marginBottom: "1rem",
-            }}
-          >
-            <div className="cardHead">
-              <span>TRAINING PHASE</span>
-              <span>{trainingPhase.toUpperCase()}</span>
-            </div>
-
-            <h2
-              style={{
-                marginTop: "1rem",
-                marginBottom: ".4rem",
-              }}
-            >
-              {trainingPhase} phase
-            </h2>
-
-            <p>
-              {getPhaseDescription(trainingPhase)}
-            </p>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
-                gap: "8px",
-                marginTop: "1.2rem",
-              }}
-            >
-              {["Base", "Build", "Peak", "Taper"].map(
-                (phase) => {
-                  const active = phase === trainingPhase;
-
-                  return (
-                    <div
-                      key={phase}
-                      style={{
-                        borderRadius: "10px",
-                        padding: "10px",
-                        textAlign: "center",
-                        fontSize: "12px",
-                        fontWeight: 900,
-                        border: active
-                          ? "2px solid #171914"
-                          : "1px solid #d8d7cf",
-                        background: active
-                          ? "#d6ff38"
-                          : "#f7f6f1",
-                      }}
-                    >
-                      {phase}
-                    </div>
-                  );
-                }
-              )}
-            </div>
-
-            <div
-              style={{
-                marginTop: "1rem",
-                fontSize: "13px",
-                color: "#6f7268",
-              }}
-            >
-              {weeksToRace !== null
-                ? `${weeksToRace} weeks to race day`
-                : "Race date not set"}
-            </div>
           </section>
         )}
 

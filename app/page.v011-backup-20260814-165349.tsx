@@ -77,13 +77,6 @@ type WorkoutFeedback = {
   completedAt: string;
 };
 
-type TrainingArchiveWeek = {
-  plan: TrainingPlan;
-  feedback: WorkoutFeedback[];
-  review: WeeklyReview | null;
-  archivedAt: string;
-};
-
 type WeeklyReview = {
   headline: string;
   summary: string;
@@ -171,48 +164,6 @@ function attachWeekDates(plan: TrainingPlan): TrainingPlan {
   };
 }
 
-function getWeeksUntilRace(raceDate?: string) {
-  if (!raceDate) return null;
-
-  const race = new Date(`${raceDate}T12:00:00`);
-  const now = new Date();
-
-  return Math.max(
-    0,
-    Math.ceil(
-      (race.getTime() - now.getTime()) /
-        (7 * 86400000)
-    )
-  );
-}
-
-function getTrainingPhaseUI(raceDate?: string) {
-  const weeks = getWeeksUntilRace(raceDate);
-
-  if (weeks === null) return "Base";
-  if (weeks <= 2) return "Taper";
-  if (weeks <= 4) return "Peak";
-  if (weeks <= 12) return "Build";
-
-  return "Base";
-}
-
-function getPhaseDescription(phase: string) {
-  if (phase === "Taper") {
-    return "Reduce fatigue while keeping enough intensity to stay race-ready.";
-  }
-
-  if (phase === "Peak") {
-    return "Prioritize race-specific sessions and protect recovery between key workouts.";
-  }
-
-  if (phase === "Build") {
-    return "Develop race-specific endurance gradually while maintaining consistency.";
-  }
-
-  return "Build aerobic consistency, technical skill and durable training habits.";
-}
-
 export default function Home() {
   const [screen, setScreen] =
     useState<"home" | "onboarding" | "dashboard">("home");
@@ -260,11 +211,7 @@ export default function Home() {
 
   const [workoutHistory, setWorkoutHistory] = useState<WorkoutFeedback[]>([]);
   const [planHistory, setPlanHistory] = useState<TrainingPlan[]>([]);
-  const [trainingArchive, setTrainingArchive] =
-    useState<TrainingArchiveWeek[]>([]);
-
-  const [weeklyReview, setWeeklyReview] =
-    useState<WeeklyReview | null>(null);
+  const [weeklyReview, setWeeklyReview] = useState<WeeklyReview | null>(null);
   const [isNextWeekLoading, setIsNextWeekLoading] = useState(false);
 
   const [supabase] = useState(() => createClient());
@@ -409,12 +356,6 @@ export default function Home() {
             setPlanHistory(trainingData.plan_history);
           }
 
-          if (trainingData?.training_archive) {
-            setTrainingArchive(
-              trainingData.training_archive
-            );
-          }
-
           if (trainingData?.weekly_review) {
             setWeeklyReview(trainingData.weekly_review);
           }
@@ -430,8 +371,6 @@ export default function Home() {
             localStorage.getItem("tricoach-workout-history");
           const savedPlanHistory =
             localStorage.getItem("tricoach-plan-history");
-          const savedTrainingArchive =
-            localStorage.getItem("tricoach-training-archive");
           const savedWeeklyReview =
             localStorage.getItem("tricoach-weekly-review");
 
@@ -452,12 +391,6 @@ export default function Home() {
 
           if (savedPlanHistory) {
             setPlanHistory(JSON.parse(savedPlanHistory));
-          }
-
-          if (savedTrainingArchive) {
-            setTrainingArchive(
-              JSON.parse(savedTrainingArchive)
-            );
           }
 
           if (savedWeeklyReview) {
@@ -552,7 +485,6 @@ export default function Home() {
             active_plan: trainingPlan,
             workout_history: workoutHistory,
             plan_history: planHistory,
-            training_archive: trainingArchive,
             weekly_review: weeklyReview,
             updated_at: new Date().toISOString(),
           },
@@ -573,7 +505,6 @@ export default function Home() {
     trainingPlan,
     workoutHistory,
     planHistory,
-    trainingArchive,
     weeklyReview,
     hasRestoredData,
     userId,
@@ -602,15 +533,6 @@ export default function Home() {
   useEffect(() => {
     if (!hasRestoredData) return;
 
-    localStorage.setItem(
-      "tricoach-training-archive",
-      JSON.stringify(trainingArchive)
-    );
-  }, [trainingArchive, hasRestoredData]);
-
-  useEffect(() => {
-    if (!hasRestoredData) return;
-
     if (weeklyReview) {
       localStorage.setItem(
         "tricoach-weekly-review",
@@ -618,12 +540,6 @@ export default function Home() {
       );
     }
   }, [weeklyReview, hasRestoredData]);
-
-  const weeksToRace =
-    getWeeksUntilRace(athlete.raceDate);
-
-  const trainingPhase =
-    getTrainingPhaseUI(athlete.raceDate);
 
   const today = useMemo(() => {
     const day = new Date().getDay();
@@ -681,7 +597,6 @@ export default function Home() {
           athlete,
           trainingPlan,
           workoutHistory,
-          trainingArchive,
           history: oldChat,
         }),
       });
@@ -850,7 +765,6 @@ export default function Home() {
             currentPlan: trainingPlan,
             workoutHistory,
             planHistory,
-            trainingArchive,
           }),
         }
       );
@@ -867,16 +781,6 @@ export default function Home() {
       setPlanHistory((current) => [
         ...current,
         trainingPlan,
-      ]);
-
-      setTrainingArchive((current) => [
-        ...current,
-        {
-          plan: trainingPlan,
-          feedback: workoutHistory,
-          review: data.review,
-          archivedAt: new Date().toISOString(),
-        },
       ]);
 
       setWeeklyReview(data.review);
@@ -1668,82 +1572,6 @@ export default function Home() {
                 </>
               );
             })()}
-          </section>
-        )}
-
-        {athlete.raceDate && (
-          <section
-            className="todayCard"
-            style={{
-              minHeight: "auto",
-              marginBottom: "1rem",
-            }}
-          >
-            <div className="cardHead">
-              <span>TRAINING PHASE</span>
-              <span>{trainingPhase.toUpperCase()}</span>
-            </div>
-
-            <h2
-              style={{
-                marginTop: "1rem",
-                marginBottom: ".4rem",
-              }}
-            >
-              {trainingPhase} phase
-            </h2>
-
-            <p>
-              {getPhaseDescription(trainingPhase)}
-            </p>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
-                gap: "8px",
-                marginTop: "1.2rem",
-              }}
-            >
-              {["Base", "Build", "Peak", "Taper"].map(
-                (phase) => {
-                  const active = phase === trainingPhase;
-
-                  return (
-                    <div
-                      key={phase}
-                      style={{
-                        borderRadius: "10px",
-                        padding: "10px",
-                        textAlign: "center",
-                        fontSize: "12px",
-                        fontWeight: 900,
-                        border: active
-                          ? "2px solid #171914"
-                          : "1px solid #d8d7cf",
-                        background: active
-                          ? "#d6ff38"
-                          : "#f7f6f1",
-                      }}
-                    >
-                      {phase}
-                    </div>
-                  );
-                }
-              )}
-            </div>
-
-            <div
-              style={{
-                marginTop: "1rem",
-                fontSize: "13px",
-                color: "#6f7268",
-              }}
-            >
-              {weeksToRace !== null
-                ? `${weeksToRace} weeks to race day`
-                : "Race date not set"}
-            </div>
           </section>
         )}
 
