@@ -37,7 +37,6 @@ type ChatMessage = {
 
 type TrainingPlanDay = {
   day: string;
-  date?: string;
   sport: string;
   title: string;
   durationMinutes: number;
@@ -50,29 +49,17 @@ type TrainingPlan = {
   summary: string;
   totalHours: number;
   focus: string;
-  weekNumber?: number;
-  weekStart?: string;
   days: TrainingPlanDay[];
 };
 
 type WorkoutFeedback = {
   id: string;
   day: string;
-  date?: string;
   sport: string;
   title: string;
-
-  plannedDurationMinutes: number | null;
-
   status: "Completed" | "Skipped" | "Modified";
-
-  actualDurationMinutes: number | null;
-  distance: number | null;
-  distanceUnit: "km" | "m" | null;
-
   rpe: number | null;
   feeling: "Great" | "Normal" | "Heavy" | null;
-
   comment: string;
   completedAt: string;
 };
@@ -107,62 +94,6 @@ const quickReplies = [
   "I slept badly last night",
   "I missed yesterday's workout",
 ];
-
-function toISODate(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function getMonday(date = new Date()) {
-  const copy = new Date(date);
-  const day = copy.getDay();
-  const diff = day === 0 ? -6 : 1 - day;
-  copy.setDate(copy.getDate() + diff);
-  copy.setHours(12, 0, 0, 0);
-  return copy;
-}
-
-function getISOWeekNumber(date = new Date()) {
-  const copy = new Date(Date.UTC(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate()
-  ));
-
-  const dayNum = copy.getUTCDay() || 7;
-  copy.setUTCDate(copy.getUTCDate() + 4 - dayNum);
-
-  const yearStart = new Date(Date.UTC(copy.getUTCFullYear(), 0, 1));
-
-  return Math.ceil(
-    (((copy.getTime() - yearStart.getTime()) / 86400000) + 1) / 7
-  );
-}
-
-function attachWeekDates(plan: TrainingPlan): TrainingPlan {
-  const start = plan.weekStart
-    ? new Date(`${plan.weekStart}T12:00:00`)
-    : getMonday();
-
-  const days = plan.days.map((day, index) => {
-    const date = new Date(start);
-    date.setDate(start.getDate() + index);
-
-    return {
-      ...day,
-      date: day.date || toISODate(date),
-    };
-  });
-
-  return {
-    ...plan,
-    weekNumber: plan.weekNumber ?? getISOWeekNumber(start),
-    weekStart: plan.weekStart ?? toISODate(start),
-    days,
-  };
-}
 
 export default function Home() {
   const [screen, setScreen] =
@@ -232,15 +163,6 @@ export default function Home() {
 
   const [selectedWorkout, setSelectedWorkout] =
     useState<TrainingPlanDay | null>(null);
-
-  const [feedbackWorkout, setFeedbackWorkout] =
-    useState<TrainingPlanDay | null>(null);
-
-  const [actualDurationMinutes, setActualDurationMinutes] =
-    useState("");
-
-  const [actualDistance, setActualDistance] =
-    useState("");
 
   const [chat, setChat] = useState<ChatMessage[]>([
     {
@@ -342,9 +264,7 @@ export default function Home() {
           }
 
           if (trainingData?.active_plan) {
-            setTrainingPlan(
-              attachWeekDates(trainingData.active_plan)
-            );
+            setTrainingPlan(trainingData.active_plan);
             setScreen("dashboard");
           }
 
@@ -379,9 +299,7 @@ export default function Home() {
           }
 
           if (savedPlan) {
-            setTrainingPlan(
-              attachWeekDates(JSON.parse(savedPlan))
-            );
+            setTrainingPlan(JSON.parse(savedPlan));
             setScreen("dashboard");
           }
 
@@ -635,86 +553,22 @@ export default function Home() {
   }
 
   function saveWorkoutFeedback() {
-    const workout =
-      feedbackWorkout ??
-      trainingPlan?.days?.find(
-        (item) =>
-          item.day.slice(0, 3) === today[0]
-      );
-
-    if (!workout) {
-      alert("Could not identify the workout.");
-      return;
-    }
-
-    const isSkipped =
-      feedbackStatus === "Skipped";
-
-    const parsedDuration =
-      actualDurationMinutes.trim() === ""
-        ? null
-        : Number(actualDurationMinutes);
-
-    const parsedDistance =
-      actualDistance.trim() === ""
-        ? null
-        : Number(actualDistance);
-
-    const usesDistance =
-      workout.sport === "Run" ||
-      workout.sport === "Bike" ||
-      workout.sport === "Swim";
-
-    const distanceUnit =
-      workout.sport === "Swim"
-        ? "m"
-        : workout.sport === "Run" ||
-          workout.sport === "Bike"
-        ? "km"
-        : null;
-
     const feedback: WorkoutFeedback = {
       id: `${Date.now()}`,
-
-      day: workout.day,
-      date: workout.date,
-
-      sport: workout.sport,
-      title: workout.title,
-
-      plannedDurationMinutes:
-        workout.durationMinutes ?? null,
-
+      day: today[0],
+      sport: today[1],
+      title: today[2],
       status: feedbackStatus,
-
-      actualDurationMinutes:
-        isSkipped
-          ? null
-          : parsedDuration ??
-            workout.durationMinutes ??
-            null,
-
-      distance:
-        isSkipped || !usesDistance
-          ? null
-          : parsedDistance,
-
-      distanceUnit,
-
       rpe:
-        isSkipped
+        feedbackStatus === "Skipped"
           ? null
           : feedbackRpe,
-
       feeling:
-        isSkipped
+        feedbackStatus === "Skipped"
           ? null
           : feedbackFeeling,
-
       comment: feedbackComment.trim(),
-
-      completedAt:
-        new Date().toISOString(),
+      completedAt: new Date().toISOString(),
     };
 
     setWorkoutHistory((current) => [
@@ -723,17 +577,11 @@ export default function Home() {
     ]);
 
     setFeedbackOpen(false);
-    setFeedbackWorkout(null);
-
     setFeedbackStatus("Completed");
     setFeedbackRpe(5);
     setFeedbackFeeling("Normal");
     setFeedbackComment("");
-
-    setActualDurationMinutes("");
-    setActualDistance("");
   }
-
 
   async function generateNextWeek() {
     if (!trainingPlan) {
@@ -784,21 +632,7 @@ export default function Home() {
       ]);
 
       setWeeklyReview(data.review);
-
-      const previousStart = trainingPlan.weekStart
-        ? new Date(`${trainingPlan.weekStart}T12:00:00`)
-        : getMonday();
-
-      const nextStart = new Date(previousStart);
-      nextStart.setDate(previousStart.getDate() + 7);
-
-      setTrainingPlan(
-        attachWeekDates({
-          ...data.nextPlan,
-          weekNumber: getISOWeekNumber(nextStart),
-          weekStart: toISODate(nextStart),
-        })
-      );
+      setTrainingPlan(data.nextPlan);
 
       // Start a clean feedback log for the new week.
       setWorkoutHistory([]);
@@ -837,9 +671,7 @@ export default function Home() {
         throw new Error(data.error || "Plan generation failed");
       }
 
-      setTrainingPlan(
-        attachWeekDates(data.plan)
-      );
+      setTrainingPlan(data.plan);
       setScreen("dashboard");
     } catch (error) {
       console.error("Plan generation error:", error);
@@ -1517,64 +1349,6 @@ export default function Home() {
           </div>
         </header>
 
-        {athlete.raceDate && (
-          <section
-            className="todayCard"
-            style={{
-              minHeight: "auto",
-              marginBottom: "1rem",
-            }}
-          >
-            <div className="cardHead">
-              <span>RACE COUNTDOWN</span>
-              <span>{athlete.goal}</span>
-            </div>
-
-            {(() => {
-              const todayDate = new Date();
-              const raceDate = new Date(
-                `${athlete.raceDate}T12:00:00`
-              );
-
-              const daysRemaining = Math.max(
-                0,
-                Math.ceil(
-                  (raceDate.getTime() - todayDate.getTime()) /
-                    86400000
-                )
-              );
-
-              const weeksRemaining = Math.ceil(
-                daysRemaining / 7
-              );
-
-              return (
-                <>
-                  <h2
-                    style={{
-                      marginTop: "1rem",
-                      marginBottom: ".25rem",
-                    }}
-                  >
-                    {daysRemaining} days to race day
-                  </h2>
-
-                  <p>
-                    Approximately {weeksRemaining} training weeks
-                    remain until{" "}
-                    {raceDate.toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                    .
-                  </p>
-                </>
-              );
-            })()}
-          </section>
-        )}
-
         <div className="dashboardGrid">
           <div className="todayCard">
             <div className="cardHead">
@@ -1634,24 +1408,7 @@ export default function Home() {
             <div className="actionRow">
               <button
                 className="primary"
-                onClick={() => {
-                  const currentWorkout =
-                    trainingPlan?.days?.find(
-                      (item) =>
-                        item.day.slice(0, 3) === today[0]
-                    ) ?? null;
-
-                  setFeedbackWorkout(currentWorkout);
-
-                  if (currentWorkout) {
-                    setActualDurationMinutes(
-                      String(currentWorkout.durationMinutes)
-                    );
-                  }
-
-                  setActualDistance("");
-                  setFeedbackOpen(true);
-                }}
+                onClick={() => setFeedbackOpen(true)}
               >
                 Log workout
               </button>
@@ -1750,39 +1507,11 @@ export default function Home() {
 
         {feedbackOpen && (
           <section className="questionCard" style={{ marginTop: "1.5rem" }}>
-            <div className="eyebrow">
-              WORKOUT FEEDBACK
-            </div>
+            <div className="eyebrow">WORKOUT FEEDBACK</div>
 
             <h1 style={{ fontSize: "2.4rem" }}>
-              How did the workout go?
+              How did today go?
             </h1>
-
-            {feedbackWorkout && (
-              <div
-                style={{
-                  marginBottom: "1.5rem",
-                  padding: "1rem",
-                  borderRadius: "12px",
-                  background: "#ecebe4",
-                }}
-              >
-                <strong>
-                  {feedbackWorkout.day} ·{" "}
-                  {feedbackWorkout.sport}
-                </strong>
-
-                <div
-                  style={{
-                    marginTop: ".35rem",
-                    color: "#6f7268",
-                  }}
-                >
-                  {feedbackWorkout.title} ·{" "}
-                  {feedbackWorkout.durationMinutes} min planned
-                </div>
-              </div>
-            )}
 
             <div className="choiceGrid three">
               {(["Completed", "Modified", "Skipped"] as const).map(
@@ -1806,83 +1535,6 @@ export default function Home() {
 
             {feedbackStatus !== "Skipped" && (
               <>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      feedbackWorkout?.sport === "Strength"
-                        ? "1fr"
-                        : "1fr 1fr",
-                    gap: "10px",
-                    marginTop: "1.5rem",
-                  }}
-                >
-                  <div>
-                    <div
-                      className="eyebrow"
-                      style={{
-                        marginBottom: ".5rem",
-                      }}
-                    >
-                      ACTUAL DURATION
-                    </div>
-
-                    <input
-                      className="field"
-                      type="number"
-                      min="0"
-                      step="1"
-                      value={actualDurationMinutes}
-                      placeholder="Minutes"
-                      onChange={(e) =>
-                        setActualDurationMinutes(
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-
-                  {feedbackWorkout &&
-                    ["Run", "Bike", "Swim"].includes(
-                      feedbackWorkout.sport
-                    ) && (
-                      <div>
-                        <div
-                          className="eyebrow"
-                          style={{
-                            marginBottom: ".5rem",
-                          }}
-                        >
-                          {feedbackWorkout.sport === "Swim"
-                            ? "DISTANCE (METERS)"
-                            : "DISTANCE (KM)"}
-                        </div>
-
-                        <input
-                          className="field"
-                          type="number"
-                          min="0"
-                          step={
-                            feedbackWorkout.sport === "Swim"
-                              ? "25"
-                              : "0.1"
-                          }
-                          value={actualDistance}
-                          placeholder={
-                            feedbackWorkout.sport === "Swim"
-                              ? "e.g. 1800"
-                              : "e.g. 9.2"
-                          }
-                          onChange={(e) =>
-                            setActualDistance(
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                    )}
-                </div>
-
                 <div style={{ marginTop: "1.5rem" }}>
                   <div className="eyebrow">RPE</div>
 
@@ -1968,21 +1620,10 @@ export default function Home() {
           <div className="sectionTitle">
             <div>
               <span className="eyebrow">
-                {trainingPlan?.weekNumber
-                  ? `WEEK ${trainingPlan.weekNumber}`
-                  : "THIS WEEK"}
+                THIS WEEK
               </span>
 
-              <h2>
-                {trainingPlan?.weekStart
-                  ? new Date(
-                      `${trainingPlan.weekStart}T12:00:00`
-                    ).toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "long",
-                    })
-                  : "Your plan"}
-              </h2>
+              <h2>Your plan</h2>
             </div>
 
             <span>
@@ -2006,17 +1647,7 @@ export default function Home() {
                 }}
               >
                 <div className="dayTop">
-                  <strong>
-                    {workout.date
-                      ? new Date(
-                          `${workout.date}T12:00:00`
-                        ).toLocaleDateString("en-GB", {
-                          weekday: "short",
-                          day: "numeric",
-                        })
-                      : workout.day.slice(0, 3)}
-                  </strong>
-
+                  <strong>{workout.day.slice(0, 3)}</strong>
                   <span>{workout.sport}</span>
                 </div>
 
@@ -2059,78 +1690,6 @@ export default function Home() {
             </span>
           </div>
         </section>
-
-        {planHistory.length > 0 && (
-          <section className="weekSection">
-            <div className="sectionTitle">
-              <div>
-                <span className="eyebrow">
-                  TRAINING HISTORY
-                </span>
-
-                <h2>Previous weeks</h2>
-              </div>
-
-              <span>
-                {planHistory.length} completed{" "}
-                {planHistory.length === 1 ? "week" : "weeks"}
-              </span>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gap: "10px",
-                marginTop: "1rem",
-              }}
-            >
-              {planHistory
-                .slice()
-                .reverse()
-                .slice(0, 6)
-                .map((plan, index) => (
-                  <div
-                    key={`${plan.weekStart ?? index}-${index}`}
-                    className="dayCard"
-                    style={{
-                      minHeight: "auto",
-                    }}
-                  >
-                    <div className="dayTop">
-                      <strong>
-                        {plan.weekNumber
-                          ? `Week ${plan.weekNumber}`
-                          : `Previous week ${planHistory.length - index}`}
-                      </strong>
-
-                      <span>
-                        {plan.totalHours} h
-                      </span>
-                    </div>
-
-                    <h3
-                      style={{
-                        marginTop: "1rem",
-                      }}
-                    >
-                      {plan.focus}
-                    </h3>
-
-                    <p>
-                      {plan.weekStart
-                        ? new Date(
-                            `${plan.weekStart}T12:00:00`
-                          ).toLocaleDateString("en-GB", {
-                            day: "numeric",
-                            month: "short",
-                          })
-                        : plan.summary}
-                    </p>
-                  </div>
-                ))}
-            </div>
-          </section>
-        )}
 
         {weeklyReview && (
           <section className="weekSection">
@@ -2256,79 +1815,6 @@ export default function Home() {
           </section>
         )}
 
-        {workoutHistory.length > 0 && (() => {
-          const completedMinutes =
-            workoutHistory.reduce(
-              (total, item) =>
-                total +
-                (item.actualDurationMinutes ?? 0),
-              0
-            );
-
-          const plannedMinutes =
-            workoutHistory.reduce(
-              (total, item) =>
-                total +
-                (item.plannedDurationMinutes ?? 0),
-              0
-            );
-
-          const completion =
-            plannedMinutes > 0
-              ? Math.round(
-                  (completedMinutes /
-                    plannedMinutes) *
-                    100
-                )
-              : 0;
-
-          return (
-            <section
-              className="todayCard"
-              style={{
-                minHeight: "auto",
-                marginTop: "2rem",
-              }}
-            >
-              <div className="cardHead">
-                <span>WEEK PROGRESS</span>
-                <span>
-                  {completion}% of logged planned time
-                </span>
-              </div>
-
-              <div className="metricRow">
-                <div>
-                  <small>TRAINED</small>
-                  <strong>
-                    {Math.floor(
-                      completedMinutes / 60
-                    )}h{" "}
-                    {completedMinutes % 60}m
-                  </strong>
-                </div>
-
-                <div>
-                  <small>PLANNED</small>
-                  <strong>
-                    {Math.floor(
-                      plannedMinutes / 60
-                    )}h{" "}
-                    {plannedMinutes % 60}m
-                  </strong>
-                </div>
-
-                <div>
-                  <small>LOGGED</small>
-                  <strong>
-                    {workoutHistory.length}
-                  </strong>
-                </div>
-              </div>
-            </section>
-          );
-        })()}
-
         {workoutHistory.length > 0 && (
           <section className="weekSection">
             <div className="sectionTitle">
@@ -2368,43 +1854,10 @@ export default function Home() {
                     <h3>{item.title}</h3>
 
                     <p>
-                      {item.status === "Skipped"
-                        ? "No training completed"
-                        : [
-                            item.actualDurationMinutes
-                              ? `${item.actualDurationMinutes} min`
-                              : null,
-
-                            item.distance
-                              ? `${item.distance} ${item.distanceUnit}`
-                              : null,
-
-                            item.rpe
-                              ? `RPE ${item.rpe}/10`
-                              : null,
-
-                            item.feeling,
-                          ]
-                            .filter(Boolean)
-                            .join(" · ")}
+                      {item.rpe
+                        ? `RPE ${item.rpe}/10 · ${item.feeling}`
+                        : "No training completed"}
                     </p>
-
-                    {item.status !== "Skipped" &&
-                      item.plannedDurationMinutes &&
-                      item.actualDurationMinutes && (
-                        <p
-                          style={{
-                            marginTop: ".45rem",
-                            fontSize: ".75rem",
-                            color: "#85877f",
-                          }}
-                        >
-                          Planned{" "}
-                          {item.plannedDurationMinutes} min
-                          → completed{" "}
-                          {item.actualDurationMinutes} min
-                        </p>
-                      )}
 
                     {item.comment && (
                       <p style={{ marginTop: ".6rem" }}>
@@ -2570,16 +2023,6 @@ export default function Home() {
               <button
                 className="primary"
                 onClick={() => {
-                  setFeedbackWorkout(selectedWorkout);
-
-                  setActualDurationMinutes(
-                    String(
-                      selectedWorkout.durationMinutes
-                    )
-                  );
-
-                  setActualDistance("");
-
                   setFeedbackOpen(true);
                   setSelectedWorkout(null);
                 }}

@@ -58,21 +58,11 @@ type TrainingPlan = {
 type WorkoutFeedback = {
   id: string;
   day: string;
-  date?: string;
   sport: string;
   title: string;
-
-  plannedDurationMinutes: number | null;
-
   status: "Completed" | "Skipped" | "Modified";
-
-  actualDurationMinutes: number | null;
-  distance: number | null;
-  distanceUnit: "km" | "m" | null;
-
   rpe: number | null;
   feeling: "Great" | "Normal" | "Heavy" | null;
-
   comment: string;
   completedAt: string;
 };
@@ -232,15 +222,6 @@ export default function Home() {
 
   const [selectedWorkout, setSelectedWorkout] =
     useState<TrainingPlanDay | null>(null);
-
-  const [feedbackWorkout, setFeedbackWorkout] =
-    useState<TrainingPlanDay | null>(null);
-
-  const [actualDurationMinutes, setActualDurationMinutes] =
-    useState("");
-
-  const [actualDistance, setActualDistance] =
-    useState("");
 
   const [chat, setChat] = useState<ChatMessage[]>([
     {
@@ -635,86 +616,22 @@ export default function Home() {
   }
 
   function saveWorkoutFeedback() {
-    const workout =
-      feedbackWorkout ??
-      trainingPlan?.days?.find(
-        (item) =>
-          item.day.slice(0, 3) === today[0]
-      );
-
-    if (!workout) {
-      alert("Could not identify the workout.");
-      return;
-    }
-
-    const isSkipped =
-      feedbackStatus === "Skipped";
-
-    const parsedDuration =
-      actualDurationMinutes.trim() === ""
-        ? null
-        : Number(actualDurationMinutes);
-
-    const parsedDistance =
-      actualDistance.trim() === ""
-        ? null
-        : Number(actualDistance);
-
-    const usesDistance =
-      workout.sport === "Run" ||
-      workout.sport === "Bike" ||
-      workout.sport === "Swim";
-
-    const distanceUnit =
-      workout.sport === "Swim"
-        ? "m"
-        : workout.sport === "Run" ||
-          workout.sport === "Bike"
-        ? "km"
-        : null;
-
     const feedback: WorkoutFeedback = {
       id: `${Date.now()}`,
-
-      day: workout.day,
-      date: workout.date,
-
-      sport: workout.sport,
-      title: workout.title,
-
-      plannedDurationMinutes:
-        workout.durationMinutes ?? null,
-
+      day: today[0],
+      sport: today[1],
+      title: today[2],
       status: feedbackStatus,
-
-      actualDurationMinutes:
-        isSkipped
-          ? null
-          : parsedDuration ??
-            workout.durationMinutes ??
-            null,
-
-      distance:
-        isSkipped || !usesDistance
-          ? null
-          : parsedDistance,
-
-      distanceUnit,
-
       rpe:
-        isSkipped
+        feedbackStatus === "Skipped"
           ? null
           : feedbackRpe,
-
       feeling:
-        isSkipped
+        feedbackStatus === "Skipped"
           ? null
           : feedbackFeeling,
-
       comment: feedbackComment.trim(),
-
-      completedAt:
-        new Date().toISOString(),
+      completedAt: new Date().toISOString(),
     };
 
     setWorkoutHistory((current) => [
@@ -723,17 +640,11 @@ export default function Home() {
     ]);
 
     setFeedbackOpen(false);
-    setFeedbackWorkout(null);
-
     setFeedbackStatus("Completed");
     setFeedbackRpe(5);
     setFeedbackFeeling("Normal");
     setFeedbackComment("");
-
-    setActualDurationMinutes("");
-    setActualDistance("");
   }
-
 
   async function generateNextWeek() {
     if (!trainingPlan) {
@@ -1634,24 +1545,7 @@ export default function Home() {
             <div className="actionRow">
               <button
                 className="primary"
-                onClick={() => {
-                  const currentWorkout =
-                    trainingPlan?.days?.find(
-                      (item) =>
-                        item.day.slice(0, 3) === today[0]
-                    ) ?? null;
-
-                  setFeedbackWorkout(currentWorkout);
-
-                  if (currentWorkout) {
-                    setActualDurationMinutes(
-                      String(currentWorkout.durationMinutes)
-                    );
-                  }
-
-                  setActualDistance("");
-                  setFeedbackOpen(true);
-                }}
+                onClick={() => setFeedbackOpen(true)}
               >
                 Log workout
               </button>
@@ -1750,39 +1644,11 @@ export default function Home() {
 
         {feedbackOpen && (
           <section className="questionCard" style={{ marginTop: "1.5rem" }}>
-            <div className="eyebrow">
-              WORKOUT FEEDBACK
-            </div>
+            <div className="eyebrow">WORKOUT FEEDBACK</div>
 
             <h1 style={{ fontSize: "2.4rem" }}>
-              How did the workout go?
+              How did today go?
             </h1>
-
-            {feedbackWorkout && (
-              <div
-                style={{
-                  marginBottom: "1.5rem",
-                  padding: "1rem",
-                  borderRadius: "12px",
-                  background: "#ecebe4",
-                }}
-              >
-                <strong>
-                  {feedbackWorkout.day} ·{" "}
-                  {feedbackWorkout.sport}
-                </strong>
-
-                <div
-                  style={{
-                    marginTop: ".35rem",
-                    color: "#6f7268",
-                  }}
-                >
-                  {feedbackWorkout.title} ·{" "}
-                  {feedbackWorkout.durationMinutes} min planned
-                </div>
-              </div>
-            )}
 
             <div className="choiceGrid three">
               {(["Completed", "Modified", "Skipped"] as const).map(
@@ -1806,83 +1672,6 @@ export default function Home() {
 
             {feedbackStatus !== "Skipped" && (
               <>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      feedbackWorkout?.sport === "Strength"
-                        ? "1fr"
-                        : "1fr 1fr",
-                    gap: "10px",
-                    marginTop: "1.5rem",
-                  }}
-                >
-                  <div>
-                    <div
-                      className="eyebrow"
-                      style={{
-                        marginBottom: ".5rem",
-                      }}
-                    >
-                      ACTUAL DURATION
-                    </div>
-
-                    <input
-                      className="field"
-                      type="number"
-                      min="0"
-                      step="1"
-                      value={actualDurationMinutes}
-                      placeholder="Minutes"
-                      onChange={(e) =>
-                        setActualDurationMinutes(
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-
-                  {feedbackWorkout &&
-                    ["Run", "Bike", "Swim"].includes(
-                      feedbackWorkout.sport
-                    ) && (
-                      <div>
-                        <div
-                          className="eyebrow"
-                          style={{
-                            marginBottom: ".5rem",
-                          }}
-                        >
-                          {feedbackWorkout.sport === "Swim"
-                            ? "DISTANCE (METERS)"
-                            : "DISTANCE (KM)"}
-                        </div>
-
-                        <input
-                          className="field"
-                          type="number"
-                          min="0"
-                          step={
-                            feedbackWorkout.sport === "Swim"
-                              ? "25"
-                              : "0.1"
-                          }
-                          value={actualDistance}
-                          placeholder={
-                            feedbackWorkout.sport === "Swim"
-                              ? "e.g. 1800"
-                              : "e.g. 9.2"
-                          }
-                          onChange={(e) =>
-                            setActualDistance(
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                    )}
-                </div>
-
                 <div style={{ marginTop: "1.5rem" }}>
                   <div className="eyebrow">RPE</div>
 
@@ -2256,79 +2045,6 @@ export default function Home() {
           </section>
         )}
 
-        {workoutHistory.length > 0 && (() => {
-          const completedMinutes =
-            workoutHistory.reduce(
-              (total, item) =>
-                total +
-                (item.actualDurationMinutes ?? 0),
-              0
-            );
-
-          const plannedMinutes =
-            workoutHistory.reduce(
-              (total, item) =>
-                total +
-                (item.plannedDurationMinutes ?? 0),
-              0
-            );
-
-          const completion =
-            plannedMinutes > 0
-              ? Math.round(
-                  (completedMinutes /
-                    plannedMinutes) *
-                    100
-                )
-              : 0;
-
-          return (
-            <section
-              className="todayCard"
-              style={{
-                minHeight: "auto",
-                marginTop: "2rem",
-              }}
-            >
-              <div className="cardHead">
-                <span>WEEK PROGRESS</span>
-                <span>
-                  {completion}% of logged planned time
-                </span>
-              </div>
-
-              <div className="metricRow">
-                <div>
-                  <small>TRAINED</small>
-                  <strong>
-                    {Math.floor(
-                      completedMinutes / 60
-                    )}h{" "}
-                    {completedMinutes % 60}m
-                  </strong>
-                </div>
-
-                <div>
-                  <small>PLANNED</small>
-                  <strong>
-                    {Math.floor(
-                      plannedMinutes / 60
-                    )}h{" "}
-                    {plannedMinutes % 60}m
-                  </strong>
-                </div>
-
-                <div>
-                  <small>LOGGED</small>
-                  <strong>
-                    {workoutHistory.length}
-                  </strong>
-                </div>
-              </div>
-            </section>
-          );
-        })()}
-
         {workoutHistory.length > 0 && (
           <section className="weekSection">
             <div className="sectionTitle">
@@ -2368,43 +2084,10 @@ export default function Home() {
                     <h3>{item.title}</h3>
 
                     <p>
-                      {item.status === "Skipped"
-                        ? "No training completed"
-                        : [
-                            item.actualDurationMinutes
-                              ? `${item.actualDurationMinutes} min`
-                              : null,
-
-                            item.distance
-                              ? `${item.distance} ${item.distanceUnit}`
-                              : null,
-
-                            item.rpe
-                              ? `RPE ${item.rpe}/10`
-                              : null,
-
-                            item.feeling,
-                          ]
-                            .filter(Boolean)
-                            .join(" · ")}
+                      {item.rpe
+                        ? `RPE ${item.rpe}/10 · ${item.feeling}`
+                        : "No training completed"}
                     </p>
-
-                    {item.status !== "Skipped" &&
-                      item.plannedDurationMinutes &&
-                      item.actualDurationMinutes && (
-                        <p
-                          style={{
-                            marginTop: ".45rem",
-                            fontSize: ".75rem",
-                            color: "#85877f",
-                          }}
-                        >
-                          Planned{" "}
-                          {item.plannedDurationMinutes} min
-                          → completed{" "}
-                          {item.actualDurationMinutes} min
-                        </p>
-                      )}
 
                     {item.comment && (
                       <p style={{ marginTop: ".6rem" }}>
@@ -2570,16 +2253,6 @@ export default function Home() {
               <button
                 className="primary"
                 onClick={() => {
-                  setFeedbackWorkout(selectedWorkout);
-
-                  setActualDurationMinutes(
-                    String(
-                      selectedWorkout.durationMinutes
-                    )
-                  );
-
-                  setActualDistance("");
-
                   setFeedbackOpen(true);
                   setSelectedWorkout(null);
                 }}
