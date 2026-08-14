@@ -34,36 +34,8 @@ Race date: ${athlete.raceDate || "Unknown"}
 Available training time: ${athlete.hoursPerWeek || "Unknown"} hours/week
 Weakest discipline: ${athlete.weakestDiscipline || "Unknown"}
 
-Triathlon experience: ${athlete.experience || "Unknown"}
-Current training volume: ${athlete.currentTrainingHours || "Unknown"} hours/week
-
-Swim level: ${athlete.swimLevel || "Unknown"}
-Bike level: ${athlete.bikeLevel || "Unknown"}
-Run level: ${athlete.runLevel || "Unknown"}
-
-Available training days:
-${JSON.stringify(athlete.availableDays || [])}
-
-Longest realistic session:
-${athlete.longestSessionMinutes || "Unknown"} minutes
-
-Equipment:
-Pool access: ${athlete.poolAccess ? "Yes" : "No"}
-Indoor trainer: ${athlete.indoorTrainer ? "Yes" : "No"}
-Gym access: ${athlete.gymAccess ? "Yes" : "No"}
-
-Athlete limitations / notes:
-${athlete.limitations || "None supplied"}
-
 PLANNING PRINCIPLES:
 - Balance swim, bike, run and recovery.
-- Respect the athlete's available training days.
-- Do not schedule pool swimming if the athlete has no pool access.
-- Respect the athlete's longest realistic session duration.
-- Consider current training volume when setting first-week volume.
-- Do not jump aggressively from current weekly training volume to target availability.
-- Use the athlete's discipline levels when selecting session complexity.
-- Treat limitations and athlete notes as meaningful constraints.
 - Prioritize the weakest discipline where sensible.
 - Do not stack unnecessary hard sessions.
 - Avoid more than 2 demanding sessions in the week for a beginner/intermediate athlete.

@@ -12,22 +12,6 @@ type Athlete = {
   raceDate: string;
   hoursPerWeek: string;
   weakestDiscipline: Discipline;
-
-  experience: "Beginner" | "Intermediate" | "Experienced";
-  currentTrainingHours: string;
-
-  swimLevel: "Beginner" | "Developing" | "Confident";
-  bikeLevel: "Beginner" | "Developing" | "Confident";
-  runLevel: "Beginner" | "Developing" | "Confident";
-
-  availableDays: string[];
-  longestSessionMinutes: string;
-
-  poolAccess: boolean;
-  indoorTrainer: boolean;
-  gymAccess: boolean;
-
-  limitations: string;
 };
 
 type ChatMessage = {
@@ -107,31 +91,6 @@ export default function Home() {
     raceDate: "",
     hoursPerWeek: "8",
     weakestDiscipline: "Swimming",
-
-    experience: "Beginner",
-    currentTrainingHours: "5",
-
-    swimLevel: "Beginner",
-    bikeLevel: "Developing",
-    runLevel: "Developing",
-
-    availableDays: [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
-    ],
-
-    longestSessionMinutes: "150",
-
-    poolAccess: true,
-    indoorTrainer: false,
-    gymAccess: false,
-
-    limitations: "",
   });
 
   const [message, setMessage] = useState("");
@@ -211,47 +170,6 @@ export default function Home() {
                 profileData.hours_per_week?.toString() ?? "8",
               weakestDiscipline:
                 profileData.weakest_discipline ?? "Swimming",
-
-              experience:
-                profileData.experience ?? "Beginner",
-
-              currentTrainingHours:
-                profileData.current_training_hours?.toString() ?? "5",
-
-              swimLevel:
-                profileData.swim_level ?? "Beginner",
-
-              bikeLevel:
-                profileData.bike_level ?? "Developing",
-
-              runLevel:
-                profileData.run_level ?? "Developing",
-
-              availableDays:
-                profileData.available_days ?? [
-                  "Monday",
-                  "Tuesday",
-                  "Wednesday",
-                  "Thursday",
-                  "Friday",
-                  "Saturday",
-                  "Sunday",
-                ],
-
-              longestSessionMinutes:
-                profileData.longest_session_minutes?.toString() ?? "150",
-
-              poolAccess:
-                profileData.pool_access ?? true,
-
-              indoorTrainer:
-                profileData.indoor_trainer ?? false,
-
-              gymAccess:
-                profileData.gym_access ?? false,
-
-              limitations:
-                profileData.limitations ?? "",
             });
           }
 
@@ -336,26 +254,6 @@ export default function Home() {
             race_date: athlete.raceDate || null,
             hours_per_week: Number(athlete.hoursPerWeek),
             weakest_discipline: athlete.weakestDiscipline,
-
-            experience: athlete.experience,
-            current_training_hours:
-              Number(athlete.currentTrainingHours),
-
-            swim_level: athlete.swimLevel,
-            bike_level: athlete.bikeLevel,
-            run_level: athlete.runLevel,
-
-            available_days: athlete.availableDays,
-
-            longest_session_minutes:
-              Number(athlete.longestSessionMinutes),
-
-            pool_access: athlete.poolAccess,
-            indoor_trainer: athlete.indoorTrainer,
-            gym_access: athlete.gymAccess,
-
-            limitations: athlete.limitations,
-
             updated_at: new Date().toISOString(),
           },
           {
@@ -673,19 +571,6 @@ export default function Home() {
     }
   }
 
-  function toggleAvailableDay(day: string) {
-    setAthlete((current) => {
-      const exists = current.availableDays.includes(day);
-
-      return {
-        ...current,
-        availableDays: exists
-          ? current.availableDays.filter((d) => d !== day)
-          : [...current.availableDays, day],
-      };
-    });
-  }
-
   const onboarding = [
     {
       eyebrow: "Athlete profile",
@@ -817,222 +702,6 @@ export default function Home() {
             )
           )}
         </div>
-      ),
-    },
-
-    {
-      eyebrow: "Experience",
-      title: "How experienced are you with triathlon?",
-      content: (
-        <div className="choiceGrid three">
-          {(["Beginner", "Intermediate", "Experienced"] as const).map(
-            (value) => (
-              <button
-                key={value}
-                className={
-                  athlete.experience === value
-                    ? "choice selected"
-                    : "choice"
-                }
-                onClick={() =>
-                  setAthlete({
-                    ...athlete,
-                    experience: value,
-                  })
-                }
-              >
-                <strong>{value}</strong>
-              </button>
-            )
-          )}
-        </div>
-      ),
-    },
-
-    {
-      eyebrow: "Current training",
-      title: "How much are you training right now?",
-      content: (
-        <div className="sliderWrap">
-          <div className="bigNumber">
-            {athlete.currentTrainingHours} h
-          </div>
-
-          <input
-            type="range"
-            min="0"
-            max="14"
-            value={athlete.currentTrainingHours}
-            onChange={(e) =>
-              setAthlete({
-                ...athlete,
-                currentTrainingHours: e.target.value,
-              })
-            }
-          />
-
-          <p>Average training hours in a normal current week.</p>
-        </div>
-      ),
-    },
-
-    {
-      eyebrow: "Discipline level",
-      title: "How would you rate your current level?",
-      content: (
-        <div>
-          {[
-            ["Swimming", "swimLevel"],
-            ["Cycling", "bikeLevel"],
-            ["Running", "runLevel"],
-          ].map(([label, key]) => (
-            <div key={key} style={{ marginBottom: "1.4rem" }}>
-              <div
-                style={{
-                  fontWeight: 900,
-                  marginBottom: ".6rem",
-                }}
-              >
-                {label}
-              </div>
-
-              <div className="choiceGrid three">
-                {(["Beginner", "Developing", "Confident"] as const).map(
-                  (value) => (
-                    <button
-                      key={value}
-                      className={
-                        athlete[key as "swimLevel" | "bikeLevel" | "runLevel"] === value
-                          ? "choice selected"
-                          : "choice"
-                      }
-                      onClick={() =>
-                        setAthlete({
-                          ...athlete,
-                          [key]: value,
-                        })
-                      }
-                    >
-                      <strong>{value}</strong>
-                    </button>
-                  )
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      ),
-    },
-
-    {
-      eyebrow: "Schedule",
-      title: "Which days can you usually train?",
-      content: (
-        <div className="choiceGrid">
-          {[
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday",
-          ].map((day) => (
-            <button
-              key={day}
-              className={
-                athlete.availableDays.includes(day)
-                  ? "choice selected"
-                  : "choice"
-              }
-              onClick={() => toggleAvailableDay(day)}
-            >
-              <strong>{day}</strong>
-            </button>
-          ))}
-        </div>
-      ),
-    },
-
-    {
-      eyebrow: "Long sessions",
-      title: "What is the longest session you can usually fit in?",
-      content: (
-        <div className="sliderWrap">
-          <div className="bigNumber">
-            {athlete.longestSessionMinutes} min
-          </div>
-
-          <input
-            type="range"
-            min="45"
-            max="300"
-            step="15"
-            value={athlete.longestSessionMinutes}
-            onChange={(e) =>
-              setAthlete({
-                ...athlete,
-                longestSessionMinutes: e.target.value,
-              })
-            }
-          />
-        </div>
-      ),
-    },
-
-    {
-      eyebrow: "Equipment",
-      title: "What do you have access to?",
-      content: (
-        <div className="choiceGrid three">
-          {[
-            ["Pool", "poolAccess"],
-            ["Indoor trainer", "indoorTrainer"],
-            ["Gym", "gymAccess"],
-          ].map(([label, key]) => (
-            <button
-              key={key}
-              className={
-                athlete[key as "poolAccess" | "indoorTrainer" | "gymAccess"]
-                  ? "choice selected"
-                  : "choice"
-              }
-              onClick={() =>
-                setAthlete({
-                  ...athlete,
-                  [key]:
-                    !athlete[
-                      key as "poolAccess" | "indoorTrainer" | "gymAccess"
-                    ],
-                })
-              }
-            >
-              <strong>{label}</strong>
-            </button>
-          ))}
-        </div>
-      ),
-    },
-
-    {
-      eyebrow: "Limitations",
-      title: "Anything your coach should know?",
-      content: (
-        <textarea
-          className="field"
-          style={{
-            minHeight: "140px",
-            resize: "vertical",
-          }}
-          value={athlete.limitations}
-          placeholder="Example: knee issues, cannot train mornings, nervous in open water..."
-          onChange={(e) =>
-            setAthlete({
-              ...athlete,
-              limitations: e.target.value,
-            })
-          }
-        />
       ),
     },
   ];

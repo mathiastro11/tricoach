@@ -40,14 +40,6 @@ You are reviewing one completed training week and creating the next week.
 ATHLETE:
 ${JSON.stringify(athlete, null, 2)}
 
-Treat the athlete profile as hard context:
-- respect available training days
-- respect maximum realistic session length
-- use current discipline levels
-- respect equipment access
-- respect athlete limitations
-- do not increase volume aggressively beyond recent training tolerance
-
 CURRENT / PREVIOUS WEEK PLAN:
 ${JSON.stringify(currentPlan, null, 2)}
 

@@ -40,27 +40,6 @@ Race date: ${athlete?.raceDate || "Unknown"}
 Available training: ${athlete?.hoursPerWeek || "Unknown"} hours/week
 Weakest discipline: ${athlete?.weakestDiscipline || "Unknown"}
 
-Triathlon experience: ${athlete?.experience || "Unknown"}
-Current weekly training: ${athlete?.currentTrainingHours || "Unknown"} hours
-
-Swim level: ${athlete?.swimLevel || "Unknown"}
-Bike level: ${athlete?.bikeLevel || "Unknown"}
-Run level: ${athlete?.runLevel || "Unknown"}
-
-Available training days:
-${JSON.stringify(athlete?.availableDays || [])}
-
-Longest realistic session:
-${athlete?.longestSessionMinutes || "Unknown"} minutes
-
-Equipment:
-Pool access: ${athlete?.poolAccess ? "Yes" : "No"}
-Indoor trainer: ${athlete?.indoorTrainer ? "Yes" : "No"}
-Gym access: ${athlete?.gymAccess ? "Yes" : "No"}
-
-Limitations / athlete notes:
-${athlete?.limitations || "None supplied"}
-
 CURRENT TRAINING PLAN:
 ${trainingPlan
   ? JSON.stringify(trainingPlan, null, 2)
