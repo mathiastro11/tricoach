@@ -19115,6 +19115,21 @@ label
   text-align: right;
 }
 
+/* ===== BASSE EXERCISE ATTRIBUTION LINKS ===== */
+
+.exerciseIllustrationV6
+.exerciseIllustrationCredit a {
+  color: inherit;
+  text-decoration-color:
+    rgba(25,27,24,.20);
+  text-underline-offset: .12rem;
+}
+
+.exerciseIllustrationV6
+.exerciseIllustrationCredit a:hover {
+  color: rgba(25,27,24,.52);
+}
+
 @media (max-width: 650px) {
 
   .strengthExerciseSummary {
@@ -19976,7 +19991,7 @@ label
       #24383a 55%,
       #192429 100%
     );
-  --race-background-image: url("/races/backgrounds/swedeman.jpg");
+  --race-background-image: url("/races/backgrounds/swedeman.webp");
   --race-background-position: center 48%;
   --race-background-opacity: .49;
 }
@@ -20057,7 +20072,7 @@ label
 
 .todayAlpineShell.raceAtmosphereNorseman {
   --race-background-image:
-    url("/races/backgrounds/norseman.jpg");
+    url("/races/backgrounds/norseman.webp");
 
   --race-background-position:
     center 42%;
@@ -20065,7 +20080,7 @@ label
 
 .todayAlpineShell.raceAtmosphereSwedeman {
   --race-background-image:
-    url("/races/backgrounds/swedeman.jpg");
+    url("/races/backgrounds/swedeman.webp");
 
   --race-background-position:
     center 46%;
@@ -20073,7 +20088,7 @@ label
 
 .todayAlpineShell.raceAtmosphereCopenhagen {
   --race-background-image:
-    url("/races/backgrounds/copenhagen.jpg");
+    url("/races/backgrounds/copenhagen.webp");
 
   --race-background-position:
     center;
@@ -20081,7 +20096,7 @@ label
 
 .todayAlpineShell.raceAtmosphereRoth {
   --race-background-image:
-    url("/races/backgrounds/roth.jpg");
+    url("/races/backgrounds/roth.webp");
 
   --race-background-position:
     center 44%;
@@ -22329,7 +22344,7 @@ label
 
 .weekAlpineShell.raceAtmosphereNorseman {
   --race-background-image:
-    url("/races/backgrounds/norseman.jpg");
+    url("/races/backgrounds/norseman.webp");
 
   --race-background-position:
     center 42%;
@@ -22340,7 +22355,7 @@ label
 
 .weekAlpineShell.raceAtmosphereSwedeman {
   --race-background-image:
-    url("/races/backgrounds/swedeman.jpg");
+    url("/races/backgrounds/swedeman.webp");
 
   --race-background-position:
     center 46%;
@@ -22351,7 +22366,7 @@ label
 
 .weekAlpineShell.raceAtmosphereCopenhagen {
   --race-background-image:
-    url("/races/backgrounds/copenhagen.jpg");
+    url("/races/backgrounds/copenhagen.webp");
 
   --race-atmosphere-accent:
     #ffb45f;
@@ -22359,7 +22374,7 @@ label
 
 .weekAlpineShell.raceAtmosphereRoth {
   --race-background-image:
-    url("/races/backgrounds/roth.jpg");
+    url("/races/backgrounds/roth.webp");
 
   --race-background-position:
     center 44%;
@@ -33295,7 +33310,7 @@ select {
 .todayAlpineShell.raceAtmosphereNorseman,
 .weekAlpineShell.raceAtmosphereNorseman {
   --race-background-image:
-    url("/races/backgrounds/norseman.jpg");
+    url("/races/backgrounds/norseman.webp");
 
   --race-background-position:
     center 42%;
@@ -33305,7 +33320,7 @@ select {
 .todayAlpineShell.raceAtmosphereSwedeman,
 .weekAlpineShell.raceAtmosphereSwedeman {
   --race-background-image:
-    url("/races/backgrounds/swedeman.jpg");
+    url("/races/backgrounds/swedeman.webp");
 
   --race-background-position:
     center 46%;
@@ -33315,7 +33330,7 @@ select {
 .todayAlpineShell.raceAtmosphereCopenhagen,
 .weekAlpineShell.raceAtmosphereCopenhagen {
   --race-background-image:
-    url("/races/backgrounds/copenhagen.jpg");
+    url("/races/backgrounds/copenhagen.webp");
 
   --race-background-position:
     center;
@@ -33325,7 +33340,7 @@ select {
 .todayAlpineShell.raceAtmosphereRoth,
 .weekAlpineShell.raceAtmosphereRoth {
   --race-background-image:
-    url("/races/backgrounds/roth.jpg");
+    url("/races/backgrounds/roth.webp");
 
   --race-background-position:
     center 44%;
@@ -50331,7 +50346,7 @@ main.landingV2::after {
       rgba(5,13,9,.23),
       rgba(5,14,10,.76)
     ),
-    url("/races/backgrounds/norseman.jpg");
+    url("/races/backgrounds/norseman.webp");
 
   background-size:
     cover;
@@ -51833,7 +51848,7 @@ main.landingV2::after {
         rgba(5,14,10,.92) 82%,
         #08120e 100%
       ),
-      url("/races/backgrounds/norseman.jpg");
+      url("/races/backgrounds/norseman.webp");
 
     background-size:
       auto 72vh;
@@ -53055,7 +53070,7 @@ main.landingV2::after {
       rgba(5,14,10,.30),
       rgba(5,14,10,.70)
     ),
-    url("/landing/triathlon-transition.jpg")
+    url("/landing/triathlon-transition.webp")
     center 42% / cover
     no-repeat
     !important;
@@ -53173,7 +53188,7 @@ main.landingV2::after {
         rgba(6,15,11,.79) 72%,
         rgba(6,14,10,.91) 100%
       ),
-      url("/landing/triathlon-transition.jpg")
+      url("/landing/triathlon-transition-mobile.webp")
       54% center / cover
       no-repeat
       !important;
@@ -54708,7 +54723,7 @@ span:nth-child(3)::before {
       rgba(5,14,10,.26),
       rgba(5,14,10,.50)
     ),
-    url("/landing/triathlon-swim-start.jpg")
+    url("/landing/triathlon-swim-start.webp")
     center 48% / cover
     no-repeat
     !important;
@@ -54856,7 +54871,7 @@ span:nth-child(3)::before {
         rgba(6,16,11,.80) 82%,
         #08120e 100%
       ),
-      url("/landing/triathlon-swim-start.jpg")
+      url("/landing/triathlon-swim-start-mobile.webp")
       54% center / cover
       no-repeat
       !important;
@@ -58339,7 +58354,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereNorseman {
   --race-background-image:
-    url("/races/backgrounds/norseman.jpg");
+    url("/races/backgrounds/norseman.webp");
 
   --race-background-position:
     center 50%;
@@ -58348,7 +58363,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereSwedeman {
   --race-background-image:
-    url("/races/backgrounds/swedeman.jpg");
+    url("/races/backgrounds/swedeman.webp");
 
   --race-background-position:
     center 50%;
@@ -58357,7 +58372,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereCopenhagen {
   --race-background-image:
-    url("/races/backgrounds/copenhagen.jpg");
+    url("/races/backgrounds/copenhagen.webp");
 
   --race-background-position:
     center 50%;
@@ -58366,7 +58381,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereRoth {
   --race-background-image:
-    url("/races/backgrounds/roth.jpg");
+    url("/races/backgrounds/roth.webp");
 
   --race-background-position:
     center 50%;
@@ -58377,7 +58392,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereCeltman {
   --race-background-image:
-    url("/races/backgrounds/celtman.jpg");
+    url("/races/backgrounds/celtman.webp");
 
   --race-background-position:
     center 52%;
@@ -58388,7 +58403,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereHimalayan {
   --race-background-image:
-    url("/races/backgrounds/himalayan.jpg");
+    url("/races/backgrounds/himalayan.webp");
 
   --race-background-position:
     center 52%;
@@ -58399,7 +58414,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereChibchi {
   --race-background-image:
-    url("/races/backgrounds/chibchi.jpg");
+    url("/races/backgrounds/chibchi.webp");
 
   --race-background-position:
     center 50%;
@@ -58410,7 +58425,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereKalmar {
   --race-background-image:
-    url("/races/backgrounds/kalmar.jpg");
+    url("/races/backgrounds/kalmar.webp");
 
   --race-background-position:
     center 48%;
@@ -58421,7 +58436,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereNice {
   --race-background-image:
-    url("/races/backgrounds/nice.jpg");
+    url("/races/backgrounds/nice.webp");
 
   --race-background-position:
     center 54%;
@@ -58432,7 +58447,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereChampionship {
   --race-background-image:
-    url("/races/backgrounds/championship.jpg");
+    url("/races/backgrounds/championship.webp");
 
   --race-background-position:
     center 52%;
@@ -58443,7 +58458,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereDallasLittleElm {
   --race-background-image:
-    url("/races/backgrounds/dallas-little-elm.jpg");
+    url("/races/backgrounds/dallas-little-elm.webp");
 
   --race-background-position:
     center 50%;
@@ -58508,7 +58523,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereCascais {
   --race-background-image:
-    url("/races/backgrounds/cascais.jpg");
+    url("/races/backgrounds/cascais.webp");
 
   --race-background-position:
     center 52%;
@@ -58519,10 +58534,20 @@ span:nth-child(3)::before {
 
 .raceAtmosphereBarcelona {
   --race-background-image:
-    url("/races/backgrounds/barcelona.jpg");
+    url("/races/backgrounds/barcelona.webp");
 
   --race-background-position:
     center 48%;
+}
+
+@media (max-width: 760px) {
+  .raceAtmosphereBarcelona {
+    --race-background-image:
+      url("/races/backgrounds/barcelona-mobile.webp");
+
+    --race-background-position:
+      center center;
+  }
 }
 
 
@@ -58530,7 +58555,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereTallinn {
   --race-background-image:
-    url("/races/backgrounds/tallinn.jpg");
+    url("/races/backgrounds/tallinn.webp");
 
   --race-background-position:
     center 52%;
@@ -58541,7 +58566,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereOslo {
   --race-background-image:
-    url("/races/backgrounds/oslo.jpg");
+    url("/races/backgrounds/oslo.webp");
 
   --race-background-position:
     center 50%;
@@ -58552,7 +58577,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereTrondheim {
   --race-background-image:
-    url("/races/backgrounds/trondheim.jpg");
+    url("/races/backgrounds/trondheim.webp");
 
   --race-background-position:
     center 48%;
@@ -58684,7 +58709,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereLondon {
   --race-background-image:
-    url("/races/backgrounds/london.jpg");
+    url("/races/backgrounds/london.webp");
 
   --race-background-position:
     center 50%;
@@ -58695,7 +58720,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereSingapore {
   --race-background-image:
-    url("/races/backgrounds/singapore.jpg");
+    url("/races/backgrounds/singapore.webp");
 
   --race-background-position:
     center 52%;
@@ -58706,7 +58731,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereChicago {
   --race-background-image:
-    url("/races/backgrounds/chicago.jpg");
+    url("/races/backgrounds/chicago.webp");
 
   --race-background-position:
     center 50%;
@@ -58717,7 +58742,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereStockholm {
   --race-background-image:
-    url("/races/backgrounds/stockholm.jpg");
+    url("/races/backgrounds/stockholm.webp");
 
   --race-background-position:
     center 48%;
@@ -58728,7 +58753,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereZellAmSee {
   --race-background-image:
-    url("/races/backgrounds/zell-am-see.jpg");
+    url("/races/backgrounds/zell-am-see.webp");
 
   --race-background-position:
     center 50%;
@@ -58780,7 +58805,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereHamburg {
   --race-background-image:
-    url("/races/backgrounds/hamburg.jpg");
+    url("/races/backgrounds/hamburg.webp");
 
   --race-background-position:
     center 50%;
@@ -58791,7 +58816,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereVancouver {
   --race-background-image:
-    url("/races/backgrounds/vancouver.jpg");
+    url("/races/backgrounds/vancouver.webp");
 
   --race-background-position:
     center 50%;
@@ -58802,7 +58827,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereSanFrancisco {
   --race-background-image:
-    url("/races/backgrounds/san-francisco.jpg");
+    url("/races/backgrounds/san-francisco.webp");
 
   --race-background-position:
     center 50%;
@@ -58813,7 +58838,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereMallorca {
   --race-background-image:
-    url("/races/backgrounds/mallorca.jpg");
+    url("/races/backgrounds/mallorca.webp");
 
   --race-background-position:
     center 52%;
@@ -58824,7 +58849,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereGoldCoast {
   --race-background-image:
-    url("/races/backgrounds/gold-coast.jpg");
+    url("/races/backgrounds/gold-coast.webp");
 
   --race-background-position:
     center 50%;
@@ -58874,119 +58899,119 @@ span:nth-child(3)::before {
 
 .raceAtmosphereBlacklake {
   --race-background-image:
-    url("/races/backgrounds/blacklake.jpg");
+    url("/races/backgrounds/blacklake.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereSanremo {
   --race-background-image:
-    url("/races/backgrounds/sanremo.jpg");
+    url("/races/backgrounds/sanremo.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereFodaxman {
   --race-background-image:
-    url("/races/backgrounds/fodaxman.jpg");
+    url("/races/backgrounds/fodaxman.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereCorfu {
   --race-background-image:
-    url("/races/backgrounds/corfu.jpg");
+    url("/races/backgrounds/corfu.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereTenby {
   --race-background-image:
-    url("/races/backgrounds/tenby.jpg");
+    url("/races/backgrounds/tenby.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereOman {
   --race-background-image:
-    url("/races/backgrounds/oman.jpg");
+    url("/races/backgrounds/oman.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereNoosa {
   --race-background-image:
-    url("/races/backgrounds/noosa.jpg");
+    url("/races/backgrounds/noosa.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereMontreal {
   --race-background-image:
-    url("/races/backgrounds/montreal.jpg");
+    url("/races/backgrounds/montreal.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereBoston {
   --race-background-image:
-    url("/races/backgrounds/boston.jpg");
+    url("/races/backgrounds/boston.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmospherePorec {
   --race-background-image:
-    url("/races/backgrounds/porec.jpg");
+    url("/races/backgrounds/porec.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereFrankfurt {
   --race-background-image:
-    url("/races/backgrounds/frankfurt.jpg");
+    url("/races/backgrounds/frankfurt.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereValencia {
   --race-background-image:
-    url("/races/backgrounds/valencia.jpg");
+    url("/races/backgrounds/valencia.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereGeneva {
   --race-background-image:
-    url("/races/backgrounds/geneva.jpg");
+    url("/races/backgrounds/geneva.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereLausanne {
   --race-background-image:
-    url("/races/backgrounds/lausanne.jpg");
+    url("/races/backgrounds/lausanne.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereAgadir {
   --race-background-image:
-    url("/races/backgrounds/agadir.jpg");
+    url("/races/backgrounds/agadir.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereLivigno {
   --race-background-image:
-    url("/races/backgrounds/livigno.jpg");
+    url("/races/backgrounds/livigno.webp");
   --race-background-position: center 50%;
 }
 
 
 .raceAtmosphereFormosa {
   --race-background-image:
-    url("/races/backgrounds/formosa.jpg");
+    url("/races/backgrounds/formosa.webp");
   --race-background-position: center 50%;
 }
 
@@ -59034,7 +59059,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereAlmere {
   --race-background-image:
-    url("/races/backgrounds/almere.jpg");
+    url("/races/backgrounds/almere.webp");
   --race-background-position: center 50%;
 }
 
@@ -59043,7 +59068,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereBerlin {
   --race-background-image:
-    url("/races/backgrounds/berlin.jpg");
+    url("/races/backgrounds/berlin.webp");
   --race-background-position: center 48%;
 }
 
@@ -59052,7 +59077,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereNewYork {
   --race-background-image:
-    url("/races/backgrounds/new-york.jpg");
+    url("/races/backgrounds/new-york.webp");
   --race-background-position: center 48%;
 }
 
@@ -59061,7 +59086,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereCervia {
   --race-background-image:
-    url("/races/backgrounds/cervia.jpg");
+    url("/races/backgrounds/cervia.webp");
   --race-background-position: center 52%;
 }
 
@@ -59070,7 +59095,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereMiami {
   --race-background-image:
-    url("/races/backgrounds/miami.jpg");
+    url("/races/backgrounds/miami.webp");
   --race-background-position: center 50%;
 }
 
@@ -59079,7 +59104,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereAuckland {
   --race-background-image:
-    url("/races/backgrounds/auckland.jpg");
+    url("/races/backgrounds/auckland.webp");
   --race-background-position: center 50%;
 }
 
@@ -59088,7 +59113,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereElsinore {
   --race-background-image:
-    url("/races/backgrounds/elsinore.jpg");
+    url("/races/backgrounds/elsinore.webp");
   --race-background-position: center 48%;
 }
 
@@ -59097,7 +59122,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereHelsinki {
   --race-background-image:
-    url("/races/backgrounds/helsinki.jpg");
+    url("/races/backgrounds/helsinki.webp");
   --race-background-position: center 50%;
 }
 
@@ -59106,7 +59131,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereArendal {
   --race-background-image:
-    url("/races/backgrounds/arendal.jpg");
+    url("/races/backgrounds/arendal.webp");
   --race-background-position: center 50%;
 }
 
@@ -59115,7 +59140,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereAix {
   --race-background-image:
-    url("/races/backgrounds/aix.jpg");
+    url("/races/backgrounds/aix.webp");
   --race-background-position: center 48%;
 }
 
@@ -59172,7 +59197,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereVieuxBoucau {
   --race-background-image:
-    url("/races/backgrounds/vieux-boucau.jpg");
+    url("/races/backgrounds/vieux-boucau.webp");
   --race-background-position: center 50%;
 }
 
@@ -59181,7 +59206,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereJanosik {
   --race-background-image:
-    url("/races/backgrounds/janosik.jpg");
+    url("/races/backgrounds/janosik.webp");
   --race-background-position: center 50%;
 }
 
@@ -59190,7 +59215,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereLusail {
   --race-background-image:
-    url("/races/backgrounds/lusail.jpg");
+    url("/races/backgrounds/lusail.webp");
   --race-background-position: center 52%;
 }
 
@@ -59199,7 +59224,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereAustralianAlps {
   --race-background-image:
-    url("/races/backgrounds/australian-alps.jpg");
+    url("/races/backgrounds/australian-alps.webp");
   --race-background-position: center 50%;
 }
 
@@ -59208,7 +59233,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereCanadaman {
   --race-background-image:
-    url("/races/backgrounds/canadaman.jpg");
+    url("/races/backgrounds/canadaman.webp");
   --race-background-position: center 50%;
 }
 
@@ -59217,7 +59242,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereToronto {
   --race-background-image:
-    url("/races/backgrounds/toronto.jpg");
+    url("/races/backgrounds/toronto.webp");
   --race-background-position: center 50%;
 }
 
@@ -59226,7 +59251,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereYokohama {
   --race-background-image:
-    url("/races/backgrounds/yokohama.jpg");
+    url("/races/backgrounds/yokohama.webp");
   --race-background-position: center 50%;
 }
 
@@ -59235,7 +59260,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereMadrid {
   --race-background-image:
-    url("/races/backgrounds/madrid.jpg");
+    url("/races/backgrounds/madrid.webp");
   --race-background-position: center 52%;
 }
 
@@ -59244,7 +59269,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereCostaNavarino {
   --race-background-image:
-    url("/races/backgrounds/costa-navarino.jpg");
+    url("/races/backgrounds/costa-navarino.webp");
   --race-background-position: center 50%;
 }
 
@@ -59253,7 +59278,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereWeymouth {
   --race-background-image:
-    url("/races/backgrounds/weymouth.jpg");
+    url("/races/backgrounds/weymouth.webp");
   --race-background-position: center 50%;
 }
 
@@ -59310,7 +59335,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereSoon {
   --race-background-image:
-    url("/races/backgrounds/son.jpg");
+    url("/races/backgrounds/son.webp");
   --race-background-position: center 50%;
 }
 
@@ -59319,7 +59344,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereHaugesund {
   --race-background-image:
-    url("/races/backgrounds/haugesund.jpg");
+    url("/races/backgrounds/haugesund.webp");
   --race-background-position: center 48%;
 }
 
@@ -59328,7 +59353,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereJevnaker {
   --race-background-image:
-    url("/races/backgrounds/jevnaker.jpg");
+    url("/races/backgrounds/jevnaker.webp");
   --race-background-position: center 50%;
 }
 
@@ -59337,7 +59362,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereLunde {
   --race-background-image:
-    url("/races/backgrounds/lunde.jpg");
+    url("/races/backgrounds/lunde.webp");
   --race-background-position: center 50%;
 }
 
@@ -59346,7 +59371,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereUvdal {
   --race-background-image:
-    url("/races/backgrounds/uvdal.jpg");
+    url("/races/backgrounds/uvdal.webp");
   --race-background-position: center 50%;
 }
 
@@ -59355,7 +59380,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereTonsberg {
   --race-background-image:
-    url("/races/backgrounds/tonsberg.jpg");
+    url("/races/backgrounds/tonsberg.webp");
   --race-background-position: center 52%;
 }
 
@@ -59364,7 +59389,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereSwissman {
   --race-background-image:
-    url("/races/backgrounds/swissman.jpg");
+    url("/races/backgrounds/swissman.webp");
   --race-background-position: center 46%;
 }
 
@@ -59373,7 +59398,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereSalou {
   --race-background-image:
-    url("/races/backgrounds/salou.jpg");
+    url("/races/backgrounds/salou.webp");
   --race-background-position: center 52%;
 }
 
@@ -59382,7 +59407,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereSwansea {
   --race-background-image:
-    url("/races/backgrounds/swansea.jpg");
+    url("/races/backgrounds/swansea.webp");
   --race-background-position: center 50%;
 }
 
@@ -59391,7 +59416,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereVitoria {
   --race-background-image:
-    url("/races/backgrounds/vitoria.jpg");
+    url("/races/backgrounds/vitoria.webp");
   --race-background-position: center 50%;
 }
 
@@ -59448,7 +59473,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereFinnskogen {
   --race-background-image:
-    url("/races/backgrounds/finnskogen.jpg");
+    url("/races/backgrounds/finnskogen.webp");
   --race-background-position: center 50%;
 }
 
@@ -59457,7 +59482,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereOs {
   --race-background-image:
-    url("/races/backgrounds/os.jpg");
+    url("/races/backgrounds/os.webp");
   --race-background-position: center 50%;
 }
 
@@ -59466,7 +59491,7 @@ span:nth-child(3)::before {
 
 .raceAtmosphereVichy {
   --race-background-image:
-    url("/races/backgrounds/vichy.jpg");
+    url("/races/backgrounds/vichy.webp");
   --race-background-position: center 52%;
 }
 
@@ -67565,7 +67590,7 @@ button.nextWeekSessionMini:hover {
       rgba(5,14,10,.28),
       rgba(5,14,10,.72)
     ),
-    url("/races/backgrounds/norseman.jpg")
+    url("/races/backgrounds/norseman.webp")
     center / cover
     no-repeat;
 
@@ -68152,7 +68177,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereAlpeDHuez {
   --race-background-image:
-    url("/races/backgrounds/alpe-dhuez.jpg");
+    url("/races/backgrounds/alpe-dhuez.webp");
 
   --race-background-position:
     center 48%;
@@ -68163,7 +68188,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmospherePhuket {
   --race-background-image:
-    url("/races/backgrounds/phuket.jpg");
+    url("/races/backgrounds/phuket.webp");
 
   --race-background-position:
     center 50%;
@@ -68196,7 +68221,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereLakePlacid {
   --race-background-image:
-    url("/races/backgrounds/lake-placid.jpg");
+    url("/races/backgrounds/lake-placid.webp");
 
   --race-background-position:
     center 52%;
@@ -68207,7 +68232,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereLanzarote {
   --race-background-image:
-    url("/races/backgrounds/lanzarote.jpg");
+    url("/races/backgrounds/lanzarote.webp");
 
   --race-background-position:
     center 48%;
@@ -68218,7 +68243,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereKlagenfurt {
   --race-background-image:
-    url("/races/backgrounds/klagenfurt.jpg");
+    url("/races/backgrounds/klagenfurt.webp");
 
   --race-background-position:
     center 52%;
@@ -68229,7 +68254,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereCairns {
   --race-background-image:
-    url("/races/backgrounds/cairns.jpg");
+    url("/races/backgrounds/cairns.webp");
 
   --race-background-position:
     center 48%;
@@ -68240,7 +68265,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereCozumel {
   --race-background-image:
-    url("/races/backgrounds/cozumel.jpg");
+    url("/races/backgrounds/cozumel.webp");
 
   --race-background-position:
     center 50%;
@@ -68251,7 +68276,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereOceanside {
   --race-background-image:
-    url("/races/backgrounds/oceanside.jpg");
+    url("/races/backgrounds/oceanside.webp");
 
   --race-background-position:
     center 47%;
@@ -68308,7 +68333,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereOregon {
   --race-background-image:
-    url("/races/backgrounds/oregon.jpg");
+    url("/races/backgrounds/oregon.webp");
 
   --race-background-position:
     center 50%;
@@ -68319,7 +68344,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereWanaka {
   --race-background-image:
-    url("/races/backgrounds/wanaka.jpg");
+    url("/races/backgrounds/wanaka.webp");
 
   --race-background-position:
     center 50%;
@@ -68330,7 +68355,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereSamarkand {
   --race-background-image:
-    url("/races/backgrounds/samarkand.jpg");
+    url("/races/backgrounds/samarkand.webp");
 
   --race-background-position:
     center 48%;
@@ -68341,7 +68366,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereCanberra {
   --race-background-image:
-    url("/races/backgrounds/canberra.jpg");
+    url("/races/backgrounds/canberra.webp");
 
   --race-background-position:
     center 50%;
@@ -68386,7 +68411,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereDubai {
   --race-background-image:
-    url("/races/backgrounds/dubai.jpg");
+    url("/races/backgrounds/dubai.webp");
 
   --race-background-position:
     center 48%;
@@ -68397,7 +68422,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereSouthAfrica {
   --race-background-image:
-    url("/races/backgrounds/south-africa.jpg");
+    url("/races/backgrounds/south-africa.webp");
 
   --race-background-position:
     center 52%;
@@ -68408,7 +68433,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereXiamen {
   --race-background-image:
-    url("/races/backgrounds/xiamen.jpg");
+    url("/races/backgrounds/xiamen.webp");
 
   --race-background-position:
     center 50%;
@@ -68419,7 +68444,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereFlorianopolis {
   --race-background-image:
-    url("/races/backgrounds/florianopolis.jpg");
+    url("/races/backgrounds/florianopolis.webp");
 
   --race-background-position:
     center 50%;
@@ -68430,7 +68455,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereTaupo {
   --race-background-image:
-    url("/races/backgrounds/taupo.jpg");
+    url("/races/backgrounds/taupo.webp");
 
   --race-background-position:
     center 52%;
@@ -68441,7 +68466,7 @@ button.nextWeekSessionMini:hover {
 
 .raceAtmosphereTexas {
   --race-background-image:
-    url("/races/backgrounds/texas.jpg");
+    url("/races/backgrounds/texas.webp");
 
   --race-background-position:
     center 50%;

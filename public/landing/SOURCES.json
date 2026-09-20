@@ -1,0 +1,87 @@
+{
+  "generatedAt": "2026-09-20T18:49:09.846Z",
+  "assets": [
+    {
+      "role": "transition",
+      "candidate": "T3",
+      "photoId": "cVeJlVvQ3JI",
+      "title": "Photo by Max Fedyshyn https://www.instagram.com/maxfedyshyn/ Model https://oleg.design",
+      "photographer": "Oleg Kukharuk",
+      "photographerUrl": "https://unsplash.com/@olegkukharuk",
+      "sourcePage": "https://unsplash.com/photos/a-man-riding-a-bike-down-a-tree-lined-road-cVeJlVvQ3JI",
+      "license": "Unsplash License",
+      "licenseUrl": "https://unsplash.com/license",
+      "premium": false,
+      "source": {
+        "width": 2000,
+        "height": 3000,
+        "downloadedSha256": "c77ab74c12f8eaab01c893584b07622c314bcbc0f6bc1ec183a4a94bbe981220"
+      },
+      "modifications": [
+        "Centre-cropped for the target aspect ratio",
+        "Resized for Basse desktop and mobile presentation",
+        "Converted to WebP",
+        "Metadata removed during derivative generation"
+      ],
+      "derivatives": [
+        {
+          "file": "triathlon-transition.webp",
+          "width": 2560,
+          "height": 1440,
+          "quality": 84,
+          "bytes": 436064,
+          "sha256": "e8b31d631deb582a3d6ab6b97c00a071e4ff10c9a3d7734db1d172527048e941"
+        },
+        {
+          "file": "triathlon-transition-mobile.webp",
+          "width": 1440,
+          "height": 1920,
+          "quality": 84,
+          "bytes": 405762,
+          "sha256": "4e4d8dbdf00d6a6394385081e9db1b3b566b816f3dc0dc94ca39a865bc96d2ad"
+        }
+      ]
+    },
+    {
+      "role": "swim-start",
+      "candidate": "S6",
+      "photoId": "cNXaraXgT6w",
+      "title": "open water swimmer, lake",
+      "photographer": "Johanna Steppan",
+      "photographerUrl": "https://unsplash.com/@powderhoneyproductions",
+      "sourcePage": "https://unsplash.com/photos/2-dolphins-in-body-of-water-during-daytime-cNXaraXgT6w",
+      "license": "Unsplash License",
+      "licenseUrl": "https://unsplash.com/license",
+      "premium": false,
+      "source": {
+        "width": 3200,
+        "height": 1801,
+        "downloadedSha256": "2e1983511dd6436145443dcea192aca48a67eda11bffef2d6024b8663ba9ec9b"
+      },
+      "modifications": [
+        "Centre-cropped for the target aspect ratio",
+        "Resized for Basse desktop and mobile presentation",
+        "Converted to WebP",
+        "Metadata removed during derivative generation"
+      ],
+      "derivatives": [
+        {
+          "file": "triathlon-swim-start.webp",
+          "width": 2560,
+          "height": 1440,
+          "quality": 84,
+          "bytes": 451866,
+          "sha256": "5b53a8a8a270f59b220bdbb156921c21fea9cf85112d61e47c3447ce4e8f54b5"
+        },
+        {
+          "file": "triathlon-swim-start-mobile.webp",
+          "width": 1440,
+          "height": 1920,
+          "quality": 84,
+          "bytes": 326244,
+          "sha256": "7fc690d8c1185128c50c98af92cd2b3ba82ed3d3260cb6f3b7b7c9ffa680a91b"
+        }
+      ]
+    }
+  ]
+}

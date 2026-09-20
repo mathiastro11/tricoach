@@ -1,0 +1,1039 @@
+{
+  "package": "@bryllim/workout-guide",
+  "version": "1.0.0",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "distribution": "Selected canonical Basse exercise frames are delivered locally.",
+  "modifications": "PNG files are copied byte-for-byte. Basse applies grayscale, contrast and brightness styling at runtime.",
+  "assets": [
+    {
+      "slug": "bench-press",
+      "exerciseName": "Bench Press",
+      "frame": 1,
+      "file": "bench-press/frame-1.png",
+      "bytes": 21760,
+      "sha256": "d15ef9b2bb07e8fe91f90f53e9fde947d016f11aca05ab681be55df734681c05",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0042-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "bench-press",
+      "exerciseName": "Bench Press",
+      "frame": 3,
+      "file": "bench-press/frame-3.png",
+      "bytes": 21226,
+      "sha256": "29b2220ddcd7e67f87d08418a7fc44dd78305f5447551745a16e0047e94ae338",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "bulgarian-split-squat",
+      "exerciseName": "Bulgarian Split Squat",
+      "frame": 1,
+      "file": "bulgarian-split-squat/frame-1.png",
+      "bytes": 37858,
+      "sha256": "fa6199e4930a5241c7ed068665856597c7a51564d43067f3dea23098a5d61201",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "bulgarian-split-squat",
+      "exerciseName": "Bulgarian Split Squat",
+      "frame": 3,
+      "file": "bulgarian-split-squat/frame-3.png",
+      "bytes": 47691,
+      "sha256": "166a989b0de6acb3702a427c480ba63d2519468180a62971c4d387d493877dad",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "calf-raise",
+      "exerciseName": "Calf Raise",
+      "frame": 1,
+      "file": "calf-raise/frame-1.png",
+      "bytes": 36236,
+      "sha256": "fccd41d7262633b7e021e0103d1331159be2182b8f88824bdba2bbc19055ade7",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "calf-raise",
+      "exerciseName": "Calf Raise",
+      "frame": 3,
+      "file": "calf-raise/frame-3.png",
+      "bytes": 51272,
+      "sha256": "a44a17a79ae429dfbc4a66219477d5d4f10e936d3c0b8f8e9663780d5ad6ee5a",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "chest-supported-row",
+      "exerciseName": "Chest Supported Row",
+      "frame": 1,
+      "file": "chest-supported-row/frame-1.png",
+      "bytes": 55720,
+      "sha256": "fb76cecbce0da1a8fb426b4ed695d7165e2e26e79a062434c154b845a604f456",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "chest-supported-row",
+      "exerciseName": "Chest Supported Row",
+      "frame": 3,
+      "file": "chest-supported-row/frame-3.png",
+      "bytes": 44587,
+      "sha256": "74c84a07059e8edd3e295001e299b9e010a21e0f68ca5cacac2e0aae6724010e",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "dead-bug",
+      "exerciseName": "Dead Bug",
+      "frame": 1,
+      "file": "dead-bug/frame-1.png",
+      "bytes": 25678,
+      "sha256": "e96abfed2b700496c7f452cbf17f646d0d620fa01970ad7f680bbdff65249703",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "dead-bug",
+      "exerciseName": "Dead Bug",
+      "frame": 3,
+      "file": "dead-bug/frame-3.png",
+      "bytes": 22269,
+      "sha256": "cdbf2452c8b7fa7f07aead3088a64953f3836492f6638fdbe91c7e824dea0974",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "deadlift",
+      "exerciseName": "Deadlift",
+      "frame": 1,
+      "file": "deadlift/frame-1.png",
+      "bytes": 14398,
+      "sha256": "723a8d27007e393c45aa5271e723cd8a1ec9f0e530da2da7d2271d7cecdcf834",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0099-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "deadlift",
+      "exerciseName": "Deadlift",
+      "frame": 3,
+      "file": "deadlift/frame-3.png",
+      "bytes": 16872,
+      "sha256": "da61dc6836903da47a544cb00bb32f1482db28b03ba4e7a03be72c34c042efe3",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "dumbbell-bench-press",
+      "exerciseName": "Dumbbell Bench Press",
+      "frame": 1,
+      "file": "dumbbell-bench-press/frame-1.png",
+      "bytes": 18003,
+      "sha256": "04d864267fc78d6c65ed09a9691345b55e995154e462113fa982d9dc31f2e575",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0055-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "dumbbell-bench-press",
+      "exerciseName": "Dumbbell Bench Press",
+      "frame": 3,
+      "file": "dumbbell-bench-press/frame-3.png",
+      "bytes": 18119,
+      "sha256": "4c3841fbf27ea5434e98e5452a3238c07762297fb7fea489aa98815ca8e4a686",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "farmer-carry",
+      "exerciseName": "Farmer Carry",
+      "frame": 1,
+      "file": "farmer-carry/frame-1.png",
+      "bytes": 36303,
+      "sha256": "c9db8248276ab5a9d94f82965a2da07c867e119a705bc168a82ac53dd8f07915",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "farmer-carry",
+      "exerciseName": "Farmer Carry",
+      "frame": 3,
+      "file": "farmer-carry/frame-3.png",
+      "bytes": 39085,
+      "sha256": "90563bdae494f220dd73e066f8538572f0e057465504ae49c7e5a54758d9e735",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "front-squat",
+      "exerciseName": "Front Squat",
+      "frame": 1,
+      "file": "front-squat/frame-1.png",
+      "bytes": 16212,
+      "sha256": "c41b33cfe3af1a5920f48a765a91ef6d53bc10d918a8023e0c32cb2ecbdcae49",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0138-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "front-squat",
+      "exerciseName": "Front Squat",
+      "frame": 3,
+      "file": "front-squat/frame-3.png",
+      "bytes": 14742,
+      "sha256": "3a44582c5adc46a962e0eb15d3ca088c6750a3f7f27dee6aa0a8890862e1b883",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "goblet-squat",
+      "exerciseName": "Goblet Squat",
+      "frame": 1,
+      "file": "goblet-squat/frame-1.png",
+      "bytes": 35504,
+      "sha256": "48d4fce078532924e377be1bf7611144884509ea02c925b0351dadbcae207a74",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "goblet-squat",
+      "exerciseName": "Goblet Squat",
+      "frame": 3,
+      "file": "goblet-squat/frame-3.png",
+      "bytes": 29440,
+      "sha256": "6aec36c32ca1571c37df83a115e35cbe2f230ba9eb9bbd5302b90f073575a8e9",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "hack-squat",
+      "exerciseName": "Hack Squat",
+      "frame": 1,
+      "file": "hack-squat/frame-1.png",
+      "bytes": 17336,
+      "sha256": "ff7b51f4c27ea4059e2197ff9da738ea1760fa48dede44362c2cbaeb1fa54d62",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0123-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "hack-squat",
+      "exerciseName": "Hack Squat",
+      "frame": 3,
+      "file": "hack-squat/frame-3.png",
+      "bytes": 17709,
+      "sha256": "13bf4e8a92e8d7e17b00e8b614be05eb01a78042620a72ebb81ec8237fa4a9a4",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "hip-thrust",
+      "exerciseName": "Hip Thrust",
+      "frame": 1,
+      "file": "hip-thrust/frame-1.png",
+      "bytes": 40327,
+      "sha256": "3c89384540b1a803240fd3faadeaa942a599d81bc0fb82514475168a2b6aa5b6",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "hip-thrust",
+      "exerciseName": "Hip Thrust",
+      "frame": 3,
+      "file": "hip-thrust/frame-3.png",
+      "bytes": 43313,
+      "sha256": "a83b449c77d1f6ec268dca666ad0a043de5f7e03f5573caace1d46f39142e2d3",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "incline-bench-press",
+      "exerciseName": "Incline Bench Press",
+      "frame": 1,
+      "file": "incline-bench-press/frame-1.png",
+      "bytes": 22211,
+      "sha256": "705284127204da6bd8d517b3a3d92bde8e9f610d6a4f2111265b357025fde7ae",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0043-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "incline-bench-press",
+      "exerciseName": "Incline Bench Press",
+      "frame": 3,
+      "file": "incline-bench-press/frame-3.png",
+      "bytes": 22275,
+      "sha256": "93ffcbd7d391691f24e3dd5e0bd0bf3a1073851c5d3df3f41c3ebc6dd215d8df",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "incline-dumbbell-press",
+      "exerciseName": "Incline Dumbbell Press",
+      "frame": 1,
+      "file": "incline-dumbbell-press/frame-1.png",
+      "bytes": 19176,
+      "sha256": "b0efc2cf575d26081e130d46d42c4198712d06a20bd512b368dc50f1f8b94d32",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0061-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "incline-dumbbell-press",
+      "exerciseName": "Incline Dumbbell Press",
+      "frame": 3,
+      "file": "incline-dumbbell-press/frame-3.png",
+      "bytes": 19696,
+      "sha256": "e86e086a9c9f8358bec9f64dfa6c3f78c1c56e11445ddf5b0a61f1de71a36512",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "jump-squat",
+      "exerciseName": "Jump Squat",
+      "frame": 1,
+      "file": "jump-squat/frame-1.png",
+      "bytes": 28012,
+      "sha256": "b97e17f60307318c2c8343fa55009244d1d816e452ee16e299ba03bb26be0787",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "jump-squat",
+      "exerciseName": "Jump Squat",
+      "frame": 3,
+      "file": "jump-squat/frame-3.png",
+      "bytes": 24725,
+      "sha256": "a9962edc7e9ab8e80bc3132f63116c56b88b6ed9fba810cb1d043fbf9cf87dc7",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "landmine-press",
+      "exerciseName": "Landmine Press",
+      "frame": 1,
+      "file": "landmine-press/frame-1.png",
+      "bytes": 34535,
+      "sha256": "2046cc58be9fb072d817797b730eda38628e443e7ca0d6a0a412b7cd2afe3ca0",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "landmine-press",
+      "exerciseName": "Landmine Press",
+      "frame": 3,
+      "file": "landmine-press/frame-3.png",
+      "bytes": 32677,
+      "sha256": "05abe50c5f07d6dae51af4cbc00d02ecb210c118deda6e0ab2de51d03cc6038d",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "lat-pulldown",
+      "exerciseName": "Lat Pulldown",
+      "frame": 1,
+      "file": "lat-pulldown/frame-1.png",
+      "bytes": 16690,
+      "sha256": "0b6f56011e9095cb1c8b1b4ae24b65b12ccc9debb25543c07b0b128eeb709935",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0093-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "lat-pulldown",
+      "exerciseName": "Lat Pulldown",
+      "frame": 3,
+      "file": "lat-pulldown/frame-3.png",
+      "bytes": 18723,
+      "sha256": "9b0280bd074294e7cafc7bdf2bda66aa8129c56b7e2e4289acab7a59629b287d",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "leg-press",
+      "exerciseName": "Leg Press",
+      "frame": 1,
+      "file": "leg-press/frame-1.png",
+      "bytes": 15810,
+      "sha256": "650a3a35d5e4a79ebec3ddb8d900d4fc324504dbed875170abfb4e1d76ea505f",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0127-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "leg-press",
+      "exerciseName": "Leg Press",
+      "frame": 3,
+      "file": "leg-press/frame-3.png",
+      "bytes": 15026,
+      "sha256": "64c75a76153cc83303f4f09f8c53b2423179c5c2c69b60531ec715cc1cc67de4",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "pallof-press",
+      "exerciseName": "Pallof Press",
+      "frame": 1,
+      "file": "pallof-press/frame-1.png",
+      "bytes": 44864,
+      "sha256": "2dfa664b6f3e021718b523901b62308a923063ba3c2867e66d9c0511cfd63052",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "pallof-press",
+      "exerciseName": "Pallof Press",
+      "frame": 3,
+      "file": "pallof-press/frame-3.png",
+      "bytes": 50491,
+      "sha256": "d9e4e7fba841e0a53257915fcd3774be44375c3adaf0c08d3421a4ac8b36dcec",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "pull-up",
+      "exerciseName": "Pull-up",
+      "frame": 1,
+      "file": "pull-up/frame-1.png",
+      "bytes": 13582,
+      "sha256": "241facc15d927a5c20818ba312a396f345a81d2546a21fb217e30396090f8917",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0087-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "pull-up",
+      "exerciseName": "Pull-up",
+      "frame": 3,
+      "file": "pull-up/frame-3.png",
+      "bytes": 16184,
+      "sha256": "b6d6f5d6d83d65d870fd4f771325d26ca2ee6c8763aed901a1275c9b7b2d72fc",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "push-up",
+      "exerciseName": "Push-up",
+      "frame": 1,
+      "file": "push-up/frame-1.png",
+      "bytes": 11342,
+      "sha256": "b294834ba2a586492bad7f8bffe5bc4e0478044542499ed9a14a1ef7d1a32333",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0077-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "push-up",
+      "exerciseName": "Push-up",
+      "frame": 3,
+      "file": "push-up/frame-3.png",
+      "bytes": 10507,
+      "sha256": "6b5d78270e9a6a386126c5b4330b9b0dfad6f18dd06a8ecc747f16744136e99b",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "reverse-lunge",
+      "exerciseName": "Reverse Lunge",
+      "frame": 1,
+      "file": "reverse-lunge/frame-1.png",
+      "bytes": 15191,
+      "sha256": "0d95836d0d8ce4d60182859c2fb7166a638deded53ff2c351966a6ad36f79ad4",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0129-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "reverse-lunge",
+      "exerciseName": "Reverse Lunge",
+      "frame": 3,
+      "file": "reverse-lunge/frame-3.png",
+      "bytes": 17222,
+      "sha256": "b3d6108383ad7671bbcdc643f4e4cf7bf82969c6912f7f23ef05d5a8cc2831d9",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "romanian-deadlift",
+      "exerciseName": "Romanian Deadlift",
+      "frame": 1,
+      "file": "romanian-deadlift/frame-1.png",
+      "bytes": 14521,
+      "sha256": "8d8a565694049a104417f26a48025cad4ae4761776b4b8d47f617dd59df08208",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0118-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "romanian-deadlift",
+      "exerciseName": "Romanian Deadlift",
+      "frame": 3,
+      "file": "romanian-deadlift/frame-3.png",
+      "bytes": 14662,
+      "sha256": "f8e4475032e5838eb3e8167267953a283409055a4fca2c42cafe727d6d137204",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "seated-calf-raise",
+      "exerciseName": "Seated Calf Raise",
+      "frame": 1,
+      "file": "seated-calf-raise/frame-1.png",
+      "bytes": 16169,
+      "sha256": "ed196c11aec6cd8a53810b66455ce8f396aeadea1df30698457746cdcefa1348",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0279-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "seated-calf-raise",
+      "exerciseName": "Seated Calf Raise",
+      "frame": 3,
+      "file": "seated-calf-raise/frame-3.png",
+      "bytes": 17406,
+      "sha256": "d19f8adbb476b99bf729bd1db2e82904a9914d049066fe5b533c0ca09db4eb83",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "seated-row",
+      "exerciseName": "Seated Cable Row",
+      "frame": 1,
+      "file": "seated-row/frame-1.png",
+      "bytes": 14149,
+      "sha256": "54204837ba7f4a22830585bf2549c6698e9eb7d980d21ece5698f50968b92ea1",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0025-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "seated-row",
+      "exerciseName": "Seated Cable Row",
+      "frame": 3,
+      "file": "seated-row/frame-3.png",
+      "bytes": 16352,
+      "sha256": "b991dc862f93ff879a4cdf0d8d9a441ec5aebcccaee605ca9292ec1c93668342",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "side-plank",
+      "exerciseName": "Side Plank",
+      "frame": 1,
+      "file": "side-plank/frame-1.png",
+      "bytes": 11860,
+      "sha256": "bb1ab60189267ae956d36445334a0ef41984a9c1dddd52c3b78ab583814a9930",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0113-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "side-plank",
+      "exerciseName": "Side Plank",
+      "frame": 3,
+      "file": "side-plank/frame-3.png",
+      "bytes": 12285,
+      "sha256": "840699ae669fc0b3be2d871a347adc64db76d16708e41995a96795d4120fc549",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "single-arm-cable-row",
+      "exerciseName": "Single-Arm Cable Row",
+      "frame": 1,
+      "file": "single-arm-cable-row/frame-1.png",
+      "bytes": 48162,
+      "sha256": "47ec917218a3b41bd7b48f145bc2d015d9a0a18bf54c5f51edd63586d9ebd6c4",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "single-arm-cable-row",
+      "exerciseName": "Single-Arm Cable Row",
+      "frame": 3,
+      "file": "single-arm-cable-row/frame-3.png",
+      "bytes": 58196,
+      "sha256": "759a904e4204e53c6e089dfc45ed38d805ce58180ed08bcbf870a5789f8ed4b7",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "single-leg-calf-raise",
+      "exerciseName": "Single-Leg Calf Raise",
+      "frame": 1,
+      "file": "single-leg-calf-raise/frame-1.png",
+      "bytes": 32570,
+      "sha256": "6a52da2254637f13b83ffb5336c3443bad532b4ab87f4c8fbd46594d6b5c5ba8",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "single-leg-calf-raise",
+      "exerciseName": "Single-Leg Calf Raise",
+      "frame": 3,
+      "file": "single-leg-calf-raise/frame-3.png",
+      "bytes": 14654,
+      "sha256": "3fda4ef7fc5e971a0f0609edbaa2aac0e1490360afc2a5a2a5193d8330774cf8",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "squat",
+      "exerciseName": "Squat",
+      "frame": 1,
+      "file": "squat/frame-1.png",
+      "bytes": 15906,
+      "sha256": "3a5a4b9f763ca14f55dcca65dcde87acf88d6e5e538367fd8aa9c2a5a02e191c",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0122-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "squat",
+      "exerciseName": "Squat",
+      "frame": 3,
+      "file": "squat/frame-3.png",
+      "bytes": 14769,
+      "sha256": "150693f0043107f6d9f50fcb7c99bd2073717af44e356d4e61891fe83ab88d9c",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "standing-calf-raise",
+      "exerciseName": "Standing Calf Raise",
+      "frame": 1,
+      "file": "standing-calf-raise/frame-1.png",
+      "bytes": 17105,
+      "sha256": "ab5fd8a91237451d8ee2c64af6002c92fabdd4b89039e6ac0f0c0f331e33a5e3",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0282-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "standing-calf-raise",
+      "exerciseName": "Standing Calf Raise",
+      "frame": 3,
+      "file": "standing-calf-raise/frame-3.png",
+      "bytes": 18218,
+      "sha256": "587eb9054af9b5ffdb97bd1f10229129fd8d19df8bc7d6de9b38273a34c14255",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "step-up",
+      "exerciseName": "Step-Up",
+      "frame": 1,
+      "file": "step-up/frame-1.png",
+      "bytes": 12381,
+      "sha256": "f276bb8a493a8ba314714c0374f1345df3ce9a7d74ff82097eb3b9cae79397fa",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "source": {
+          "name": "Everkinetic",
+          "url": "https://github.com/everkinetic/data/blob/main/dist/svg/0137-tension.svg",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "changes": "Rasterized on a transparent 512 × 512 canvas and recolored for monochrome display."
+        }
+      }
+    },
+    {
+      "slug": "step-up",
+      "exerciseName": "Step-Up",
+      "frame": 3,
+      "file": "step-up/frame-3.png",
+      "bytes": 12782,
+      "sha256": "39302988419cf952f27851f9c988ea22be36ffe1baf1f31c12d20390f52527c6",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "trap-bar-deadlift",
+      "exerciseName": "Trap Bar Deadlift",
+      "frame": 1,
+      "file": "trap-bar-deadlift/frame-1.png",
+      "bytes": 50142,
+      "sha256": "e7a1798feb73b3c8661630bbd3fef782d1f6d0a6b90c0f5c96aa11a1e7bd2ef3",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "slug": "trap-bar-deadlift",
+      "exerciseName": "Trap Bar Deadlift",
+      "frame": 3,
+      "file": "trap-bar-deadlift/frame-3.png",
+      "bytes": 65356,
+      "sha256": "f8bff7e8a795d1a239c3a5e333f367a1b0cdf015b460da6b3de7825f750ca21a",
+      "attribution": {
+        "creator": "Bryl Lim",
+        "creatorUrl": "https://bryllim.com",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    }
+  ]
+}

@@ -3,7 +3,6 @@
 import Image from "next/image";
 
 import {
-  getAssetUrl,
   getExercise,
   searchExercises,
 } from "@bryllim/workout-guide";
@@ -23,6 +22,65 @@ type ResolvedVisual = {
   slug: string;
   name: string;
 };
+
+const LOCAL_EXERCISE_ASSET_ROOT =
+  "/exercises/workout-guide";
+
+
+const LOCAL_EXERCISE_SLUGS =
+  new Set<string>([
+    "bench-press",
+    "bulgarian-split-squat",
+    "calf-raise",
+    "chest-supported-row",
+    "dead-bug",
+    "deadlift",
+    "dumbbell-bench-press",
+    "farmer-carry",
+    "front-squat",
+    "goblet-squat",
+    "hack-squat",
+    "hip-thrust",
+    "incline-bench-press",
+    "incline-dumbbell-press",
+    "jump-squat",
+    "landmine-press",
+    "lat-pulldown",
+    "leg-press",
+    "pallof-press",
+    "pull-up",
+    "push-up",
+    "reverse-lunge",
+    "romanian-deadlift",
+    "seated-calf-raise",
+    "seated-row",
+    "side-plank",
+    "single-arm-cable-row",
+    "single-leg-calf-raise",
+    "squat",
+    "standing-calf-raise",
+    "step-up",
+    "trap-bar-deadlift",
+  ]);
+
+
+function getLocalExerciseAssetUrl(
+  slug: string,
+  frame: number
+): string | null {
+
+  if (
+    !LOCAL_EXERCISE_SLUGS.has(slug) ||
+    (frame !== 1 && frame !== 3)
+  ) {
+    return null;
+  }
+
+
+  return (
+    `${LOCAL_EXERCISE_ASSET_ROOT}/${slug}/frame-${frame}.png`
+  );
+}
 
 
 /*
@@ -127,8 +185,8 @@ const EXERCISE_SLUG_CANDIDATES:
   ],
 
   "cable-row": [
-    "cable-row",
-    "seated-cable-row",
+    "seated-row",
+    "single-arm-cable-row",
   ],
 
   "bench-press": [
@@ -171,9 +229,7 @@ const EXERCISE_SLUG_CANDIDATES:
   ],
 
   "carry": [
-    "farmers-walk",
-    "farmer-walk",
-    "farmers-carry",
+    "farmer-carry",
   ],
 
   "countermovement-jump": [
@@ -554,13 +610,13 @@ function resolveByCanonicalKey(
 
 
     const start =
-      getAssetUrl(
+      getLocalExerciseAssetUrl(
         exercise.slug,
         1
       );
 
     const finish =
-      getAssetUrl(
+      getLocalExerciseAssetUrl(
         exercise.slug,
         3
       );
@@ -691,13 +747,13 @@ function resolveExerciseVisual(
     ) {
 
       const start =
-        getAssetUrl(
+        getLocalExerciseAssetUrl(
           result.slug,
           1
         );
 
       const finish =
-        getAssetUrl(
+        getLocalExerciseAssetUrl(
           result.slug,
           3
         );
@@ -799,13 +855,13 @@ export default function ExerciseIllustration({
 
 
   const frame1 =
-    getAssetUrl(
+    getLocalExerciseAssetUrl(
       visual.slug,
       1
     );
 
   const frame3 =
-    getAssetUrl(
+    getLocalExerciseAssetUrl(
       visual.slug,
       3
     );
@@ -838,7 +894,30 @@ export default function ExerciseIllustration({
 
 
       <div className="exerciseIllustrationCredit">
-        Exercise artwork · CC BY-SA 4.0
+        Exercise artwork by{" "}
+        <a
+          href="https://bryllim.com"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Bryl Lim
+        </a>
+        {" · "}
+        <a
+          href="https://creativecommons.org/licenses/by-sa/4.0/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          CC BY-SA 4.0
+        </a>
+        {" · "}
+        <a
+          href="/exercises/workout-guide/ATTRIBUTION.md"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Attribution & changes
+        </a>
       </div>
 
     </div>
