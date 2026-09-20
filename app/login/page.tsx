@@ -4,197 +4,495 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 
-export default function LoginPage() {
-  const router = useRouter();
-  const supabase = createClient();
 
-  const [mode, setMode] = useState<"login" | "signup">("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+export default function LoginPage() {
+
+  const router =
+    useRouter();
+
+  const supabase =
+    createClient();
+
+
+  const [email, setEmail] =
+    useState("");
+
+  const [password, setPassword] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [message, setMessage] =
+    useState("");
+
 
   async function handleSubmit() {
+
     setLoading(true);
     setMessage("");
 
+
     try {
-      if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
 
-        if (error) {
-          throw error;
-        }
+      const { error } =
+        await supabase.auth
+          .signInWithPassword({
+            email,
+            password,
+          });
 
+
+      if (error) {
+        throw error;
+      }
+
+
+      router.push("/");
+      router.refresh();
+
+    } catch (error) {
+
+      if (error instanceof Error) {
         setMessage(
-          "Account created. Check your email if confirmation is required."
+          error.message
         );
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) {
-          throw error;
-        }
-
-        router.push("/");
-        router.refresh();
+        setMessage(
+          "Something went wrong."
+        );
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        setMessage(error.message);
-      } else {
-        setMessage("Something went wrong.");
-      }
+
     } finally {
+
       setLoading(false);
+
     }
   }
+
 
   return (
     <main
       style={{
-        minHeight: "100vh",
+        position: "relative",
+        minHeight: "100dvh",
+        overflow: "hidden",
         display: "grid",
         placeItems: "center",
-        background: "#f3f1eb",
-        padding: "24px",
+        padding:
+          "max(24px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom))",
+        background:
+          `
+            linear-gradient(
+              180deg,
+              rgba(5,14,10,.52),
+              rgba(5,14,10,.82)
+            ),
+            linear-gradient(
+              90deg,
+              rgba(5,14,10,.78),
+              rgba(5,14,10,.30),
+              rgba(5,14,10,.76)
+            ),
+            url("/races/backgrounds/norseman.jpg")
+            center / cover
+            no-repeat
+          `,
+        color: "#d5ded8",
       }}
     >
+
+      <button
+        type="button"
+        onClick={() =>
+          router.push("/")
+        }
+        style={{
+          position: "absolute",
+          top:
+            "max(22px, env(safe-area-inset-top))",
+          left: "22px",
+          border: 0,
+          background:
+            "transparent",
+          color:
+            "#9aaba1",
+          fontSize:
+            "13px",
+          fontWeight:
+            700,
+          cursor:
+            "pointer",
+        }}
+      >
+        ← Back
+      </button>
+
+
       <section
         style={{
           width: "100%",
           maxWidth: "430px",
-          background: "white",
-          border: "1px solid #d8d7cf",
-          borderRadius: "24px",
-          padding: "32px",
+          padding:
+            "34px 30px 30px",
+          border:
+            "1px solid rgba(255,255,255,.09)",
+          borderRadius:
+            "26px",
+          background:
+            "linear-gradient(155deg, rgba(27,44,35,.84), rgba(10,23,17,.88))",
+          boxShadow:
+            "0 34px 90px rgba(0,0,0,.38)",
+          backdropFilter:
+            "blur(20px)",
+          WebkitBackdropFilter:
+            "blur(20px)",
         }}
       >
-        <div
-          style={{
-            fontWeight: 900,
-            marginBottom: "40px",
-          }}
-        >
-          ▲ TRI//COACH
-        </div>
 
         <div
           style={{
-            fontSize: "12px",
-            fontWeight: 900,
-            letterSpacing: "0.14em",
-            marginBottom: "10px",
+            marginBottom:
+              "42px",
+            color:
+              "#a7b9ae",
+            fontSize:
+              "13px",
+            fontWeight:
+              850,
+            letterSpacing:
+              ".12em",
           }}
         >
-          {mode === "login" ? "WELCOME BACK" : "JOIN THE BETA"}
+          BASSE
         </div>
+
+
+        <span
+          style={{
+            display:
+              "block",
+            marginBottom:
+              "10px",
+            color:
+              "#8aaa98",
+            fontSize:
+              "11px",
+            fontWeight:
+              800,
+            letterSpacing:
+              ".14em",
+          }}
+        >
+          WELCOME BACK
+        </span>
+
 
         <h1
           style={{
-            fontSize: "44px",
-            lineHeight: 0.95,
-            letterSpacing: "-0.05em",
-            marginBottom: "28px",
+            maxWidth:
+              "360px",
+            margin:
+              "0 0 14px",
+            color:
+              "#d7e0da",
+            fontSize:
+              "clamp(38px, 7vw, 52px)",
+            lineHeight:
+              ".96",
+            letterSpacing:
+              "-.055em",
+            fontWeight:
+              620,
           }}
         >
-          {mode === "login"
-            ? "Your coach is ready."
-            : "Build your athlete profile."}
+          Your coach
+          <br />
+          is ready.
         </h1>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "16px",
-            border: "1px solid #d8d7cf",
-            borderRadius: "12px",
-            marginBottom: "12px",
-            fontSize: "16px",
-          }}
-        />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleSubmit();
-            }
-          }}
+        <p
           style={{
-            width: "100%",
-            padding: "16px",
-            border: "1px solid #d8d7cf",
-            borderRadius: "12px",
-            marginBottom: "16px",
-            fontSize: "16px",
+            margin:
+              "0 0 30px",
+            color:
+              "#87998f",
+            fontSize:
+              "14px",
+            lineHeight:
+              1.55,
           }}
-        />
+        >
+          Log in to continue with
+          your training plan.
+        </p>
+
+
+        <label
+          style={{
+            display:
+              "grid",
+            gap:
+              "7px",
+            marginBottom:
+              "14px",
+          }}
+        >
+
+          <span
+            style={{
+              color:
+                "#7f9387",
+              fontSize:
+                "10px",
+              fontWeight:
+                800,
+              letterSpacing:
+                ".11em",
+            }}
+          >
+            EMAIL
+          </span>
+
+          <input
+            type="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => {
+              setEmail(
+                e.target.value
+              );
+
+              setMessage("");
+            }}
+            style={{
+              width:
+                "100%",
+              minHeight:
+                "52px",
+              boxSizing:
+                "border-box",
+              padding:
+                "0 15px",
+              outline:
+                "none",
+              border:
+                "1px solid rgba(255,255,255,.075)",
+              borderRadius:
+                "12px",
+              background:
+                "rgba(6,17,12,.28)",
+              color:
+                "#d3ddd7",
+              fontSize:
+                "15px",
+            }}
+          />
+
+        </label>
+
+
+        <label
+          style={{
+            display:
+              "grid",
+            gap:
+              "7px",
+            marginBottom:
+              "19px",
+          }}
+        >
+
+          <span
+            style={{
+              color:
+                "#7f9387",
+              fontSize:
+                "10px",
+              fontWeight:
+                800,
+              letterSpacing:
+                ".11em",
+            }}
+          >
+            PASSWORD
+          </span>
+
+          <input
+            type="password"
+            autoComplete="current-password"
+            placeholder="Your password"
+            value={password}
+            onChange={(e) => {
+              setPassword(
+                e.target.value
+              );
+
+              setMessage("");
+            }}
+            onKeyDown={(e) => {
+              if (
+                e.key === "Enter" &&
+                email &&
+                password.length >= 6
+              ) {
+                void handleSubmit();
+              }
+            }}
+            style={{
+              width:
+                "100%",
+              minHeight:
+                "52px",
+              boxSizing:
+                "border-box",
+              padding:
+                "0 15px",
+              outline:
+                "none",
+              border:
+                "1px solid rgba(255,255,255,.075)",
+              borderRadius:
+                "12px",
+              background:
+                "rgba(6,17,12,.28)",
+              color:
+                "#d3ddd7",
+              fontSize:
+                "15px",
+            }}
+          />
+
+        </label>
+
 
         <button
-          onClick={handleSubmit}
-          disabled={loading || !email || password.length < 6}
+          type="button"
+          onClick={() =>
+            void handleSubmit()
+          }
+          disabled={
+            loading ||
+            !email ||
+            password.length < 6
+          }
           style={{
-            width: "100%",
-            background: "#171914",
-            color: "white",
-            border: 0,
-            borderRadius: "12px",
-            padding: "16px",
-            fontWeight: 900,
-            cursor: "pointer",
+            width:
+              "100%",
+            minHeight:
+              "52px",
+            border:
+              0,
+            borderRadius:
+              "12px",
+            background:
+              loading ||
+              !email ||
+              password.length < 6
+                ? "rgba(154,190,168,.35)"
+                : "#a6cbb3",
+            color:
+              "#102019",
+            fontSize:
+              "14px",
+            fontWeight:
+              800,
+            cursor:
+              loading ||
+              !email ||
+              password.length < 6
+                ? "default"
+                : "pointer",
           }}
         >
           {loading
-            ? "Working..."
-            : mode === "login"
-            ? "Log in →"
-            : "Create account →"}
+            ? "Logging in..."
+            : "Log in →"}
         </button>
 
+
         {message && (
-          <p
+          <div
+            role="status"
             style={{
-              marginTop: "16px",
-              color: "#6f7268",
-              lineHeight: 1.5,
+              marginTop:
+                "15px",
+              padding:
+                "11px 12px",
+              border:
+                "1px solid rgba(255,255,255,.065)",
+              borderRadius:
+                "10px",
+              background:
+                "rgba(7,17,12,.22)",
+              color:
+                "#aab9b0",
+              fontSize:
+                "13px",
+              lineHeight:
+                1.45,
             }}
           >
             {message}
-          </p>
+          </div>
         )}
 
-        <button
-          onClick={() =>
-            setMode(mode === "login" ? "signup" : "login")
-          }
+
+        <div
           style={{
-            width: "100%",
-            marginTop: "20px",
-            background: "transparent",
-            border: 0,
-            color: "#6f7268",
-            cursor: "pointer",
+            marginTop:
+              "25px",
+            paddingTop:
+              "20px",
+            borderTop:
+              "1px solid rgba(255,255,255,.055)",
+            textAlign:
+              "center",
           }}
         >
-          {mode === "login"
-            ? "New here? Create an account"
-            : "Already have an account? Log in"}
-        </button>
+
+          <span
+            style={{
+              color:
+                "#72867a",
+              fontSize:
+                "12px",
+            }}
+          >
+            New to Basse?{" "}
+          </span>
+
+          <button
+            type="button"
+            onClick={() =>
+              router.push("/")
+            }
+            style={{
+              padding:
+                0,
+              border:
+                0,
+              background:
+                "transparent",
+              color:
+                "#9db9a8",
+              fontSize:
+                "12px",
+              fontWeight:
+                750,
+              cursor:
+                "pointer",
+            }}
+          >
+            Get started
+          </button>
+
+        </div>
+
       </section>
+
     </main>
   );
 }
