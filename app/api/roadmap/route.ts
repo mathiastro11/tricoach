@@ -7,6 +7,10 @@ import {
 } from "@/lib/api-auth";
 
 import {
+  enforceAiRateLimit,
+} from "@/lib/api-rate-limit";
+
+import {
   createOpenAIClient,
 } from "@/lib/openai-server";
 import { NextResponse } from "next/server";
@@ -67,6 +71,23 @@ export async function POST(
     !authentication.ok
   ) {
     return authentication.response;
+  }
+
+
+  const rateLimit =
+    await enforceAiRateLimit({
+      userId:
+        authentication.user.id,
+
+      route:
+        "roadmap",
+    });
+
+
+  if (
+    !rateLimit.ok
+  ) {
+    return rateLimit.response;
   }
 
 

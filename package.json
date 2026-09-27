@@ -78,11 +78,12 @@
     "test:api-auth": "tsx scripts/test-api-auth-regression.ts",
     "test:api-request": "tsx scripts/test-api-request-regression.ts",
     "test:openai-safety": "tsx scripts/test-openai-timeout-regression.ts",
-    "test:api-security": "npm run test:api-auth && npm run test:api-request && npm run test:openai-safety",
+    "test:api-security": "npm run test:api-auth && npm run test:api-request && npm run test:openai-safety && npm run test:api-rate-limit",
     "test:database-security": "tsx scripts/test-database-security-regression.ts",
     "test:security": "npm run test:api-security && npm run test:database-security",
     "test:ai-plan-scenarios": "tsx scripts/test-ai-plan-scenarios.ts",
-    "test:next-week-runtime": "tsx scripts/test-next-week-runtime-regression.ts"
+    "test:next-week-runtime": "tsx scripts/test-next-week-runtime-regression.ts",
+    "test:api-rate-limit": "tsx scripts/test-api-rate-limit-regression.ts"
   },
   "dependencies": {
     "@bryllim/workout-guide": "^1.0.0",
