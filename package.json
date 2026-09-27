@@ -72,15 +72,17 @@
     "import:races:v27:dry": "tsx scripts/import-race-expansion-v27.ts --dry-run",
     "import:races:v27": "tsx scripts/import-race-expansion-v27.ts",
     "test:next-week-volume-repair": "tsx scripts/test-next-week-volume-repair.ts",
-    "test:coaching-regression": "tsx scripts/test-coaching-engine-regression.ts && tsx scripts/test-training-plan-audit-regression.ts && tsx scripts/test-next-week-safety-regression.ts && tsx scripts/test-coach-plan-safety-regression.ts && tsx scripts/test-goal-change-week-safety-regression.ts && tsx scripts/test-discipline-load-regression.ts",
+    "test:coaching-regression": "tsx scripts/test-coaching-engine-regression.ts && tsx scripts/test-training-plan-audit-regression.ts && tsx scripts/test-next-week-safety-regression.ts && tsx scripts/test-coach-plan-safety-regression.ts && tsx scripts/test-goal-change-week-safety-regression.ts && tsx scripts/test-discipline-load-regression.ts && npm run test:next-week-runtime",
     "test:coaching-scenarios": "tsx scripts/test-athlete-scenario-matrix.ts",
     "test:coaching-all": "npm run test:coaching-regression && npm run test:coaching-scenarios",
     "test:api-auth": "tsx scripts/test-api-auth-regression.ts",
     "test:api-request": "tsx scripts/test-api-request-regression.ts",
-    "test:api-security": "npm run test:api-auth && npm run test:api-request",
+    "test:openai-safety": "tsx scripts/test-openai-timeout-regression.ts",
+    "test:api-security": "npm run test:api-auth && npm run test:api-request && npm run test:openai-safety",
     "test:database-security": "tsx scripts/test-database-security-regression.ts",
     "test:security": "npm run test:api-security && npm run test:database-security",
-    "test:ai-plan-scenarios": "tsx scripts/test-ai-plan-scenarios.ts"
+    "test:ai-plan-scenarios": "tsx scripts/test-ai-plan-scenarios.ts",
+    "test:next-week-runtime": "tsx scripts/test-next-week-runtime-regression.ts"
   },
   "dependencies": {
     "@bryllim/workout-guide": "^1.0.0",

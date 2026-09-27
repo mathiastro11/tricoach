@@ -17,7 +17,7 @@ import {
 } from "@/lib/target-race-week";
 
 import {
-  createOpenAIClient,
+  createPlanningOpenAIClient,
 } from "@/lib/openai-server";
 import { NextResponse } from "next/server";
 
@@ -98,7 +98,7 @@ import type {
 } from "@/types/training";
 
 const openai =
-  createOpenAIClient();
+  createPlanningOpenAIClient();
 
 
 /*
@@ -2640,8 +2640,12 @@ Your output must follow the JSON schema exactly.
         deterministically without asking the model to
         redesign an otherwise acceptable week.
 
-        Allow up to 60 minutes OR 5% of the current week,
+        Allow up to 180 minutes OR 15% of the current week,
         whichever is larger.
+
+        This remains bounded by the deterministic coaching
+        envelope, the athlete's maximum session length and
+        a 30-minute per-session extension cap.
 
         The repair helper is shared with the permanent
         regression test so production and test behavior
@@ -2649,10 +2653,10 @@ Your output must follow the JSON schema exactly.
       */
       const localRepairLimitMinutes =
         Math.max(
-          60,
+          180,
           Math.ceil(
             currentMinutes *
-            0.05
+            0.15
           )
         );
 
@@ -3030,6 +3034,22 @@ Do not add a recovery after the final repetition.
 - do not introduce unnecessary novel exercises
 - protect important endurance sessions from residual strength fatigue
 
+27. Every repaired strength exercise MUST include exerciseKey.
+- Preserve the original exerciseKey exactly when unchanged.
+- Never return a missing, descriptive or invented exerciseKey.
+- Valid values are:
+  back-squat, front-squat, goblet-squat, leg-press,
+  hack-squat, romanian-deadlift, trap-bar-deadlift,
+  hip-thrust, bulgarian-split-squat, reverse-lunge,
+  step-up, single-leg-press, seated-calf-raise,
+  standing-calf-raise, single-leg-calf-raise, pull-up,
+  lat-pulldown, chest-supported-row, cable-row,
+  bench-press, incline-dumbbell-press, dumbbell-press,
+  push-up, landmine-press, pallof-press, dead-bug,
+  side-plank, cable-anti-rotation, carry,
+  countermovement-jump, box-jump, jump-squat, other.
+- Use other only when no specific canonical key is correct.
+
 STRENGTH REPAIR OUTPUT:
 
 When sport is Strength, workoutStructure must be [] and
@@ -3040,6 +3060,7 @@ strengthStructure must use this shape:
   "warmup": ["short preparation instruction"],
   "exercises": [
     {
+      "exerciseKey": "back-squat",
       "name": "Back squat",
       "movementPattern": "Squat",
       "sets": 3,
@@ -3136,6 +3157,118 @@ No text before or after the JSON.
           preparedRepair
             .canonical
             .errors;
+
+
+        /*
+          Finish a bounded residual volume shortfall locally.
+          Canonical, availability and load audits below remain
+          authoritative after this deterministic adjustment.
+        */
+        if (
+          !raceIsNextWeek
+        ) {
+
+          const repairedMinutesBeforeFinalAudit =
+            [
+              ...repairedPlan.days,
+
+              ...(
+                repairedPlan
+                  .additionalSessions ??
+                []
+              ),
+            ].reduce(
+              (
+                total,
+                session
+              ) =>
+                total +
+                (
+                  session.sport ===
+                    "Rest"
+                    ? 0
+                    : Number(
+                        session.durationMinutes
+                      ) || 0
+                ),
+              0
+            );
+
+          const repairedMissingMinutes =
+            Math.max(
+              0,
+              targetMinMinutes -
+              repairedMinutesBeforeFinalAudit
+            );
+
+
+          if (
+            repairedMissingMinutes > 0 &&
+            repairedMissingMinutes <=
+              localRepairLimitMinutes
+          ) {
+
+            const finishingVolumeRepair =
+              repairNextWeekVolumeShortfall({
+                plan:
+                  repairedPlan,
+
+                missingMinutes:
+                  repairedMissingMinutes,
+
+                longestSessionMinutes:
+                  athlete
+                    ?.longestSessionMinutes,
+              });
+
+
+            if (
+              finishingVolumeRepair
+                .fullyApplied
+            ) {
+
+              const preparedFinishingRepair =
+                prepareGeneratedNextWeekPlan({
+                  plan:
+                    finishingVolumeRepair
+                      .plan,
+
+                  weekStart:
+                    nextWeekStart,
+                });
+
+
+              repairedPlan =
+                preparedFinishingRepair
+                  .plan;
+
+              repairedCanonicalErrors =
+                preparedFinishingRepair
+                  .canonical
+                  .errors;
+
+
+              console.info(
+                "TriCoach finished a residual repair shortfall deterministically.",
+                {
+                  addedMinutes:
+                    repairedMissingMinutes,
+
+                  repairs:
+                    finishingVolumeRepair
+                      .appliedRepairs,
+
+                  finalHours:
+                    repairedPlan
+                      .totalHours,
+                }
+              );
+
+            }
+
+          }
+
+        }
 
       } catch {
         console.error(

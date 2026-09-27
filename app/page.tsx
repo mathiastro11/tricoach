@@ -4805,6 +4805,19 @@ export default function Home() {
   const weekRolloverRunningRef =
     useRef(false);
 
+  const nextWeekConfirmedRunningRef =
+    useRef(false);
+
+  /*
+    Prevent a failed automatic rollover from launching again
+    immediately in the same mounted app. Reloading intentionally
+    permits one fresh attempt.
+  */
+  const weekRolloverAttemptedStartRef =
+    useRef<string | null>(
+      null
+    );
+
 
   async function generateNextWeekPreview(
     force = false,
@@ -4823,6 +4836,41 @@ export default function Home() {
       force &&
       availabilityOverride !==
         undefined;
+
+
+    /*
+      Automatic rollover exclusively owns a stale active week.
+      Never spend a second request building a provisional week
+      from a plan that first needs to be advanced.
+    */
+    const previewActiveStart =
+      trainingPlan?.weekStart
+        ? new Date(
+            `${trainingPlan.weekStart}T12:00:00`
+          )
+        : null;
+
+    const previewCurrentMonday =
+      getMonday();
+
+    previewCurrentMonday.setHours(
+      12,
+      0,
+      0,
+      0
+    );
+
+    const rolloverPending =
+      previewActiveStart !== null &&
+      previewCurrentMonday.getTime() >
+        previewActiveStart.getTime();
+
+    if (
+      rolloverPending
+    ) {
+      return;
+    }
+
 
     if (
       !trainingPlan ||
@@ -4893,6 +4941,27 @@ export default function Home() {
       ++nextWeekPreviewRequestIdRef.current;
 
 
+    /*
+      Freeze a semantic signature at launch time.
+
+      Persistence and state normalization may create equivalent
+      object copies while the request is running. Those copies
+      must not discard a valid response, while genuine content
+      changes must still invalidate it.
+    */
+    const previewRequestContextSignature =
+      JSON.stringify([
+        requestPlan,
+        requestHistory,
+        requestPlanHistory,
+        requestTrainingArchive,
+        requestSeasonRoadmap,
+        requestReadinessHistory,
+        requestAthlete,
+        requestAvailability,
+      ]);
+
+
     setIsNextWeekPreviewLoading(
       true
     );
@@ -4958,10 +5027,18 @@ export default function Home() {
 
 
       if (!response.ok) {
-        throw new Error(
-          data.error ||
-          "Could not build next-week preview"
-        );
+        const previewRequestError =
+          new Error(
+            data.error ||
+            "Could not build next-week preview"
+          ) as Error & {
+            status: number;
+          };
+
+        previewRequestError.status =
+          response.status;
+
+        throw previewRequestError;
       }
 
 
@@ -5062,23 +5139,22 @@ export default function Home() {
         so availability can be checked for EVERY request,
         including explicit Calendar overrides.
       */
+      const previewLatestContextSignature =
+        JSON.stringify([
+          latestTrainingPlanRef.current,
+          latestWorkoutHistoryRef.current,
+          latestPlanHistoryRef.current,
+          latestTrainingArchiveRef.current,
+          latestSeasonRoadmapRef.current,
+          latestReadinessHistoryRef.current,
+          latestAthleteRef.current,
+          latestTrainingAvailabilityRef.current,
+        ]);
+
+
       const previewContextIsStale =
-        latestTrainingPlanRef.current !==
-          requestPlan ||
-        latestWorkoutHistoryRef.current !==
-          requestHistory ||
-        latestPlanHistoryRef.current !==
-          requestPlanHistory ||
-        latestTrainingArchiveRef.current !==
-          requestTrainingArchive ||
-        latestSeasonRoadmapRef.current !==
-          requestSeasonRoadmap ||
-        latestReadinessHistoryRef.current !==
-          requestReadinessHistory ||
-        latestAthleteRef.current !==
-          requestAthlete ||
-        latestTrainingAvailabilityRef.current !==
-          requestAvailability;
+        previewLatestContextSignature !==
+        previewRequestContextSignature;
 
 
       if (
@@ -5112,6 +5188,28 @@ export default function Home() {
         error
       );
 
+
+      const responseStatus =
+        error &&
+        typeof error ===
+          "object" &&
+        "status" in error &&
+        typeof error.status ===
+          "number"
+          ? error.status
+          : null;
+
+      const isTransientNextWeekPreviewFailure =
+        responseStatus === null ||
+        responseStatus === 408 ||
+        responseStatus === 409 ||
+        responseStatus === 429 ||
+        (
+          responseStatus !== null &&
+          responseStatus >= 500
+        );
+
+
       if (
         force &&
         previewRequestId ===
@@ -5125,6 +5223,7 @@ export default function Home() {
         );
       } else if (
         !force &&
+        isTransientNextWeekPreviewFailure &&
         nextWeekPreviewAutoRetryRef.current <
         1
       ) {
@@ -5168,9 +5267,17 @@ export default function Home() {
 
 
   async function generateNextWeekConfirmed() {
-    if (!trainingPlan) {
+    if (
+      !trainingPlan ||
+      nextWeekConfirmedRunningRef.current
+    ) {
       return;
     }
+
+
+    nextWeekConfirmedRunningRef.current =
+      true;
+
 
     /*
       Freeze the exact authoritative context that is being
@@ -5191,6 +5298,22 @@ export default function Home() {
 
     const requestAthlete =
       athlete;
+
+
+    /*
+      Capture content, not JavaScript object identity.
+
+      Equivalent restored state is safe to accept. Any genuine
+      plan, feedback, Calendar or athlete change still produces
+      a different signature and invalidates the response.
+    */
+    const confirmedRequestContextSignature =
+      JSON.stringify([
+        requestPlan,
+        requestHistory,
+        requestAvailability,
+        requestAthlete,
+      ]);
 
 
     setIsNextWeekLoading(true);
@@ -5239,15 +5362,18 @@ export default function Home() {
         request runs must invalidate the response before ANY
         archive or promotion state is mutated.
       */
+      const confirmedLatestContextSignature =
+        JSON.stringify([
+          latestTrainingPlanRef.current,
+          latestWorkoutHistoryRef.current,
+          latestTrainingAvailabilityRef.current,
+          latestAthleteRef.current,
+        ]);
+
+
       const confirmedRolloverIsStale =
-        latestTrainingPlanRef.current !==
-          requestPlan ||
-        latestWorkoutHistoryRef.current !==
-          requestHistory ||
-        latestTrainingAvailabilityRef.current !==
-          requestAvailability ||
-        latestAthleteRef.current !==
-          requestAthlete;
+        confirmedLatestContextSignature !==
+        confirmedRequestContextSignature;
 
 
       if (
@@ -5384,6 +5510,9 @@ export default function Home() {
         "error"
       );
     } finally {
+      nextWeekConfirmedRunningRef.current =
+        false;
+
       setIsNextWeekLoading(false);
     }
   }
@@ -5538,6 +5667,21 @@ export default function Home() {
           )
         );
 
+
+      const rolloverAttemptKey =
+        trainingPlan!.weekStart ??
+        `week-${trainingPlan!.weekNumber}`;
+
+      if (
+        weekRolloverAttemptedStartRef.current ===
+          rolloverAttemptKey
+      ) {
+        return;
+      }
+
+
+      weekRolloverAttemptedStartRef.current =
+        rolloverAttemptKey;
 
       weekRolloverRunningRef.current =
         true;
@@ -11065,18 +11209,25 @@ export default function Home() {
       }
     >
 
-      {(isPlanLoading || isNextWeekPreviewLoading) && (
+      {(isPlanLoading ||
+        isNextWeekLoading ||
+        isNextWeekPreviewLoading) && (
         <div
           className="coachWorkStatus"
           role="status"
           aria-live="polite"
           aria-label={
             isPlanLoading &&
-            isNextWeekPreviewLoading
+            (
+              isNextWeekLoading ||
+              isNextWeekPreviewLoading
+            )
               ? "Basse is adapting your training"
               : isPlanLoading
                 ? "Basse is updating this week"
-                : "Basse is building next week"
+                : isNextWeekLoading
+                  ? "Basse is reviewing last week and preparing this week"
+                  : "Basse is building next week"
           }
         >
           <div className="coachWorkStatusTop">
@@ -11089,11 +11240,16 @@ export default function Home() {
 
               <strong>
                 {isPlanLoading &&
-                isNextWeekPreviewLoading
+                (
+                  isNextWeekLoading ||
+                  isNextWeekPreviewLoading
+                )
                   ? "Adapting your training…"
                   : isPlanLoading
                     ? "Updating this week…"
-                    : "Building next week…"}
+                    : isNextWeekLoading
+                      ? "Reviewing last week and preparing this week…"
+                      : "Building next week…"}
               </strong>
             </div>
           </div>
@@ -11107,11 +11263,16 @@ export default function Home() {
 
           <p>
             {isPlanLoading &&
-            isNextWeekPreviewLoading
+            (
+              isNextWeekLoading ||
+              isNextWeekPreviewLoading
+            )
               ? "Your current plan and upcoming week are being recalculated."
               : isPlanLoading
                 ? "Keeping completed training intact while updating what is still ahead."
-                : "Reviewing your latest training context and preparing the upcoming week."}
+                : isNextWeekLoading
+                  ? "Completed training is being reviewed before the new active week is published."
+                  : "Reviewing your latest training context and preparing the upcoming week."}
           </p>
         </div>
       )}

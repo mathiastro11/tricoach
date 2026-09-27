@@ -37,16 +37,63 @@ export const OPENAI_MAX_RETRIES =
   1;
 
 
-export function createOpenAIClient() {
+/*
+  Complex structured planning calls legitimately take longer
+  than short interactive coaching requests.
+
+  They receive one bounded attempt rather than two short
+  attempts. This prevents duplicate long-running requests,
+  duplicated cost and misleading 70-second retry failures.
+*/
+export const OPENAI_PLANNING_REQUEST_TIMEOUT_MS =
+  90_000;
+
+export const OPENAI_PLANNING_MAX_RETRIES =
+  0;
+
+
+type OpenAIClientProfile = {
+  timeout: number;
+  maxRetries: number;
+};
+
+
+function createConfiguredOpenAIClient(
+  profile: OpenAIClientProfile
+) {
 
   return new OpenAI({
     apiKey:
       process.env.OPENAI_API_KEY,
 
     timeout:
+      profile.timeout,
+
+    maxRetries:
+      profile.maxRetries,
+  });
+}
+
+
+export function createOpenAIClient() {
+
+  return createConfiguredOpenAIClient({
+    timeout:
       OPENAI_REQUEST_TIMEOUT_MS,
 
     maxRetries:
       OPENAI_MAX_RETRIES,
+  });
+}
+
+
+export function createPlanningOpenAIClient() {
+
+  return createConfiguredOpenAIClient({
+    timeout:
+      OPENAI_PLANNING_REQUEST_TIMEOUT_MS,
+
+    maxRetries:
+      OPENAI_PLANNING_MAX_RETRIES,
   });
 }

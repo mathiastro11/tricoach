@@ -128,7 +128,7 @@ export function repairNextWeekVolumeShortfall({
     */
     const perSessionCap =
       Math.min(
-        20,
+        30,
         candidate.headroom
       );
 
@@ -163,6 +163,12 @@ export function repairNextWeekVolumeShortfall({
       ),
 
       {
+        sport:
+          repairTarget.sport ===
+            "Swim"
+            ? "Swim"
+            : "Bike",
+
         kind:
           "segment",
 
