@@ -76,6 +76,8 @@
     "test:coaching-scenarios": "tsx scripts/test-athlete-scenario-matrix.ts",
     "test:coaching-all": "npm run test:coaching-regression && npm run test:coaching-scenarios",
     "test:api-auth": "tsx scripts/test-api-auth-regression.ts",
+    "test:api-request": "tsx scripts/test-api-request-regression.ts",
+    "test:api-security": "npm run test:api-auth && npm run test:api-request",
     "test:ai-plan-scenarios": "tsx scripts/test-ai-plan-scenarios.ts"
   },
   "dependencies": {

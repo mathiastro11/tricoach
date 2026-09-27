@@ -162,7 +162,7 @@ async function main() {
 
     const bodyIndex =
       source.indexOf(
-        "request.json()"
+        "await readApiJsonBody"
       );
 
 

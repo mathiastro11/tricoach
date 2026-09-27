@@ -1,4 +1,8 @@
 import {
+  readApiJsonBody,
+} from "@/lib/api-json";
+
+import {
   requireApiUser,
 } from "@/lib/api-auth";
 
@@ -49,8 +53,21 @@ export async function POST(
 
   try {
 
+    const bodyResult =
+      await readApiJsonBody(
+        request
+      );
+
+
+    if (
+      !bodyResult.ok
+    ) {
+      return bodyResult.response;
+    }
+
+
     const body =
-      await request.json();
+      bodyResult.value;
 
 
     const {

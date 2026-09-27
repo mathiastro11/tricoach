@@ -1,4 +1,8 @@
 import {
+  readApiJsonBody,
+} from "@/lib/api-json";
+
+import {
   requireApiUser,
 } from "@/lib/api-auth";
 
@@ -377,7 +381,21 @@ export async function POST(
 
 
   try {
-    const body = await request.json();
+    const bodyResult =
+      await readApiJsonBody(
+        request
+      );
+
+
+    if (
+      !bodyResult.ok
+    ) {
+      return bodyResult.response;
+    }
+
+
+    const body =
+      bodyResult.value;
 
     const trainingAvailability =
       Array.isArray(
