@@ -1,4 +1,8 @@
 import {
+  requireApiUser,
+} from "@/lib/api-auth";
+
+import {
   applyTargetRaceWeekSpecialStates,
   validateTargetRaceWeekSpecialStates,
 } from "@/lib/target-race-week";
@@ -29,6 +33,20 @@ const openai =
 export async function POST(
   request: Request
 ) {
+  const authentication =
+    await requireApiUser(
+      request
+    );
+
+
+  if (
+    !authentication.ok
+  ) {
+    return authentication.response;
+  }
+
+
+
   try {
 
     const body =

@@ -1,4 +1,8 @@
 import {
+  requireApiUser,
+} from "@/lib/api-auth";
+
+import {
   getCanonicalTrainingPhase,
   getCanonicalWeeksUntilRace,
 } from "@/lib/training-phase";
@@ -610,6 +614,20 @@ function calculateCurrentWeekImpact(
 }
 
 export async function POST(request: Request) {
+  const authentication =
+    await requireApiUser(
+      request
+    );
+
+
+  if (
+    !authentication.ok
+  ) {
+    return authentication.response;
+  }
+
+
+
   try {
     const body = await request.json();
 

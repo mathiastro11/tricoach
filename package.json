@@ -75,6 +75,7 @@
     "test:coaching-regression": "tsx scripts/test-coaching-engine-regression.ts && tsx scripts/test-training-plan-audit-regression.ts && tsx scripts/test-next-week-safety-regression.ts && tsx scripts/test-coach-plan-safety-regression.ts && tsx scripts/test-goal-change-week-safety-regression.ts && tsx scripts/test-discipline-load-regression.ts",
     "test:coaching-scenarios": "tsx scripts/test-athlete-scenario-matrix.ts",
     "test:coaching-all": "npm run test:coaching-regression && npm run test:coaching-scenarios",
+    "test:api-auth": "tsx scripts/test-api-auth-regression.ts",
     "test:ai-plan-scenarios": "tsx scripts/test-ai-plan-scenarios.ts"
   },
   "dependencies": {

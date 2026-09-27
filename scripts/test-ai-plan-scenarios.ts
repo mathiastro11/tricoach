@@ -1674,6 +1674,96 @@ async function main() {
   }
 
 
+  const testUserEmail =
+    process.env
+      .BASSE_TEST_USER_EMAIL;
+
+  const testUserPassword =
+    process.env
+      .BASSE_TEST_USER_PASSWORD;
+
+  const supabaseUrl =
+    process.env
+      .NEXT_PUBLIC_SUPABASE_URL;
+
+  const supabaseAnonKey =
+    process.env
+      .NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+
+  if (
+    !testUserEmail ||
+    !testUserPassword
+  ) {
+    throw new Error(
+      "BASSE_TEST_USER_EMAIL and BASSE_TEST_USER_PASSWORD are required for the authenticated live AI plan matrix."
+    );
+  }
+
+
+  if (
+    !supabaseUrl ||
+    !supabaseAnonKey
+  ) {
+    throw new Error(
+      "Supabase public environment configuration is unavailable."
+    );
+  }
+
+
+  const {
+    createClient,
+  } =
+    await import(
+      "@supabase/supabase-js"
+    );
+
+  const scenarioAuthClient =
+    createClient(
+      supabaseUrl,
+      supabaseAnonKey,
+      {
+        auth: {
+          persistSession:
+            false,
+
+          autoRefreshToken:
+            false,
+        },
+      }
+    );
+
+  const {
+    data: authenticationData,
+    error: authenticationError,
+  } =
+    await scenarioAuthClient
+      .auth
+      .signInWithPassword({
+        email:
+          testUserEmail,
+
+        password:
+          testUserPassword,
+      });
+
+
+  if (
+    authenticationError ||
+    !authenticationData.session
+  ) {
+    throw new Error(
+      "The Basse AI test account could not be authenticated."
+    );
+  }
+
+
+  const scenarioAccessToken =
+    authenticationData
+      .session
+      .access_token;
+
+
   /*
     Import AFTER environment loading because the route
     initializes its OpenAI client at module load.
@@ -1799,6 +1889,9 @@ async function main() {
             headers: {
               "Content-Type":
                 "application/json",
+
+              Authorization:
+                `Bearer ${scenarioAccessToken}`,
             },
 
             body:

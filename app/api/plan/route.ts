@@ -1,4 +1,8 @@
 import {
+  requireApiUser,
+} from "@/lib/api-auth";
+
+import {
   createOpenAIClient,
 } from "@/lib/openai-server";
 import { NextResponse } from "next/server";
@@ -653,6 +657,20 @@ const strengthStructureSchema: Record<string, unknown> = {
 
 
 export async function POST(request: Request) {
+  const authentication =
+    await requireApiUser(
+      request
+    );
+
+
+  if (
+    !authentication.ok
+  ) {
+    return authentication.response;
+  }
+
+
+
   try {
     const body =
       await request.json();
