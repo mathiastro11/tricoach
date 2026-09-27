@@ -1,0 +1,75 @@
+name: Basse Quality Gate
+
+on:
+  push:
+    branches:
+      - main
+      - productization-v1
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify product
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    env:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_SUPABASE_URL: "https://ci-placeholder.supabase.co"
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "ci-placeholder-anon-key"
+      OPENAI_API_KEY: "ci-placeholder-openai-key"
+      SUPABASE_SECRET_KEY: "ci-placeholder-service-key"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Pin npm
+        run: npm install --global npm@11.17.0 --no-audit --no-fund
+
+      - name: Verify toolchain
+        run: |
+          node --version
+          npm --version
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Verify CI configuration
+        run: npm run test:ci-config
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run security regressions
+        run: npm run test:security
+
+      - name: Run coaching regressions
+        run: npm run test:coaching-all
+
+      - name: Build production application
+        run: npm run build

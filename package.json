@@ -83,7 +83,10 @@
     "test:security": "npm run test:api-security && npm run test:database-security",
     "test:ai-plan-scenarios": "tsx scripts/test-ai-plan-scenarios.ts",
     "test:next-week-runtime": "tsx scripts/test-next-week-runtime-regression.ts",
-    "test:api-rate-limit": "tsx scripts/test-api-rate-limit-regression.ts"
+    "test:api-rate-limit": "tsx scripts/test-api-rate-limit-regression.ts",
+    "typecheck": "tsc --noEmit",
+    "test:ci-config": "tsx scripts/test-ci-config-regression.ts",
+    "test:ci": "npm run test:ci-config && npm run typecheck && npm run lint && npm run test:security && npm run test:coaching-all && npm run build"
   },
   "dependencies": {
     "@bryllim/workout-guide": "^1.0.0",
@@ -105,5 +108,10 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.12",
     "typescript": "^5"
-  }
+  },
+  "engines": {
+    "node": ">=24.19.0 <25",
+    "npm": ">=11.17.0 <12"
+  },
+  "packageManager": "npm@11.17.0"
 }
