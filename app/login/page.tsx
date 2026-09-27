@@ -94,7 +94,7 @@ export default function LoginPage() {
               rgba(5,14,10,.30),
               rgba(5,14,10,.76)
             ),
-            url("/races/backgrounds/norseman.jpg")
+            url("/races/backgrounds/norseman.webp")
             center / cover
             no-repeat
           `,
