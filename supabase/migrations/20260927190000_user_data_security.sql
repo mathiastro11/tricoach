@@ -28,17 +28,24 @@ create table if not exists public.profiles (
   goal text,
   race_date date,
   target_race jsonb,
-  hours_per_week double precision,
+  hours_per_week numeric,
   weakest_discipline text,
   experience text,
   capability_profile jsonb
-    default '{}'::jsonb,
-  current_training_hours double precision,
+    not null default '{}'::jsonb
+    constraint profiles_capability_profile_object_check
+    check (
+      jsonb_typeof(capability_profile) =
+      'object'
+    ),
+  current_training_hours numeric,
   swim_level text,
   bike_level text,
   run_level text,
-  available_days text[],
-  longest_session_minutes integer,
+  available_days jsonb
+    not null default
+      '["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]'::jsonb,
+  longest_session_minutes numeric,
   pool_access boolean,
   indoor_trainer boolean,
   gym_access boolean,
@@ -53,16 +60,19 @@ alter table public.profiles
   add column if not exists goal text,
   add column if not exists race_date date,
   add column if not exists target_race jsonb,
-  add column if not exists hours_per_week double precision,
+  add column if not exists hours_per_week numeric,
   add column if not exists weakest_discipline text,
   add column if not exists experience text,
-  add column if not exists capability_profile jsonb default '{}'::jsonb,
-  add column if not exists current_training_hours double precision,
+  add column if not exists capability_profile jsonb
+    not null default '{}'::jsonb,
+  add column if not exists current_training_hours numeric,
   add column if not exists swim_level text,
   add column if not exists bike_level text,
   add column if not exists run_level text,
-  add column if not exists available_days text[],
-  add column if not exists longest_session_minutes integer,
+  add column if not exists available_days jsonb
+    not null default
+      '["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]'::jsonb,
+  add column if not exists longest_session_minutes numeric,
   add column if not exists pool_access boolean,
   add column if not exists indoor_trainer boolean,
   add column if not exists gym_access boolean,
@@ -110,12 +120,34 @@ create table if not exists public.app_feedback (
   user_id uuid
     references auth.users(id)
     on delete cascade,
-  category text,
-  message text,
+  category text
+    not null
+    constraint app_feedback_category_check
+    check (
+      category in (
+        'Bug',
+        'Idea',
+        'Design',
+        'Other'
+      )
+    ),
+  message text not null,
   contact_email text,
   page_context text,
   metadata jsonb
     not null default '{}'::jsonb,
+  status text
+    not null default 'new'
+    constraint app_feedback_status_check
+    check (
+      status in (
+        'new',
+        'reviewing',
+        'planned',
+        'resolved',
+        'closed'
+      )
+    ),
   created_at timestamptz
     not null default now()
 );
@@ -128,7 +160,132 @@ alter table public.app_feedback
   add column if not exists contact_email text,
   add column if not exists page_context text,
   add column if not exists metadata jsonb default '{}'::jsonb,
+  add column if not exists status text default 'new',
   add column if not exists created_at timestamptz default now();
+
+
+alter table public.profiles
+  alter column available_days
+    set default
+      '["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]'::jsonb,
+  alter column available_days
+    set not null,
+  alter column capability_profile
+    set default '{}'::jsonb,
+  alter column capability_profile
+    set not null;
+
+
+alter table public.training_state
+  alter column workout_history
+    set default '[]'::jsonb,
+  alter column workout_history
+    set not null,
+  alter column plan_history
+    set default '[]'::jsonb,
+  alter column plan_history
+    set not null,
+  alter column training_archive
+    set default '[]'::jsonb,
+  alter column training_archive
+    set not null,
+  alter column roadmap_revisions
+    set default '[]'::jsonb,
+  alter column roadmap_revisions
+    set not null,
+  alter column readiness_history
+    set default '[]'::jsonb,
+  alter column readiness_history
+    set not null;
+
+
+alter table public.app_feedback
+  alter column category
+    set not null,
+  alter column message
+    set not null,
+  alter column metadata
+    set default '{}'::jsonb,
+  alter column metadata
+    set not null,
+  alter column status
+    set default 'new',
+  alter column status
+    set not null;
+
+
+/*
+  Preserve the canonical validation rules found in
+  the live schema when bootstrapping another environment.
+*/
+
+do $$
+begin
+
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname =
+      'profiles_capability_profile_object_check'
+      and conrelid =
+        'public.profiles'::regclass
+  ) then
+    alter table public.profiles
+      add constraint
+        profiles_capability_profile_object_check
+      check (
+        jsonb_typeof(capability_profile) =
+        'object'
+      );
+  end if;
+
+
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname =
+      'app_feedback_category_check'
+      and conrelid =
+        'public.app_feedback'::regclass
+  ) then
+    alter table public.app_feedback
+      add constraint
+        app_feedback_category_check
+      check (
+        category in (
+          'Bug',
+          'Idea',
+          'Design',
+          'Other'
+        )
+      );
+  end if;
+
+
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname =
+      'app_feedback_status_check'
+      and conrelid =
+        'public.app_feedback'::regclass
+  ) then
+    alter table public.app_feedback
+      add constraint
+        app_feedback_status_check
+      check (
+        status in (
+          'new',
+          'reviewing',
+          'planned',
+          'resolved',
+          'closed'
+        )
+      );
+  end if;
+
+end
+$$;
 
 
 /*
@@ -159,15 +316,19 @@ create index if not exists
 */
 
 do $$
+declare
+  constraint_row record;
 begin
 
   if not exists (
     select 1
     from pg_constraint
-    where conname =
-      'basse_profiles_user_id_fk'
-      and conrelid =
+    where conrelid =
         'public.profiles'::regclass
+      and contype = 'f'
+      and pg_get_constraintdef(oid)
+        like
+        'FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE%'
   ) then
     alter table public.profiles
       add constraint
@@ -181,10 +342,12 @@ begin
   if not exists (
     select 1
     from pg_constraint
-    where conname =
-      'basse_training_state_user_id_fk'
-      and conrelid =
+    where conrelid =
         'public.training_state'::regclass
+      and contype = 'f'
+      and pg_get_constraintdef(oid)
+        like
+        'FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE%'
   ) then
     alter table public.training_state
       add constraint
@@ -195,20 +358,47 @@ begin
   end if;
 
 
+  /*
+    Feedback may contain an optional contact email.
+    Account deletion must therefore delete the associated
+    feedback row rather than leave personal data behind.
+  */
   if not exists (
     select 1
     from pg_constraint
-    where conname =
-      'basse_app_feedback_user_id_fk'
-      and conrelid =
+    where conrelid =
         'public.app_feedback'::regclass
+      and contype = 'f'
+      and pg_get_constraintdef(oid)
+        like
+        'FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE%'
   ) then
+
+    for constraint_row in
+      select
+        conname
+      from pg_constraint
+      where conrelid =
+          'public.app_feedback'::regclass
+        and contype = 'f'
+        and pg_get_constraintdef(oid)
+          like
+          'FOREIGN KEY (user_id) REFERENCES auth.users(id)%'
+    loop
+      execute format(
+        'alter table public.app_feedback drop constraint %I',
+        constraint_row.conname
+      );
+    end loop;
+
+
     alter table public.app_feedback
       add constraint
         basse_app_feedback_user_id_fk
       foreign key (user_id)
       references auth.users(id)
       on delete cascade;
+
   end if;
 
 end

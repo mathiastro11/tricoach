@@ -124,6 +124,7 @@ async function main() {
     "contact_email",
     "page_context",
     "metadata",
+    "status",
   ];
 
 
@@ -149,6 +150,53 @@ async function main() {
       "on delete cascade"
     ),
     "User tables are not tied to auth.users lifecycle"
+  );
+
+
+  assert(
+    migration.includes(
+      "available_days jsonb"
+    ) &&
+    !migration.includes(
+      "available_days text[]"
+    ),
+    "available_days must match the live JSONB schema"
+  );
+
+  assert(
+    migration.includes(
+      "hours_per_week numeric"
+    ) &&
+    migration.includes(
+      "current_training_hours numeric"
+    ) &&
+    migration.includes(
+      "longest_session_minutes numeric"
+    ),
+    "Profile numeric types do not match the live schema"
+  );
+
+  assert(
+    migration.includes(
+      "app_feedback_category_check"
+    ) &&
+    migration.includes(
+      "app_feedback_status_check"
+    ) &&
+    migration.includes(
+      "profiles_capability_profile_object_check"
+    ),
+    "Live validation constraints are not preserved"
+  );
+
+  assert(
+    migration.includes(
+      "basse_app_feedback_user_id_fk"
+    ) &&
+    migration.includes(
+      "Account deletion must therefore delete"
+    ),
+    "Feedback lifecycle is not aligned with account deletion"
   );
 
   assert(
