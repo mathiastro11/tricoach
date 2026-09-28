@@ -5,6 +5,7 @@ type SettingsModalProps = {
   open: boolean;
   userEmail: string;
   isResetting: boolean;
+  isDeletingAccount: boolean;
 
   unitSystem:
     | "Metric"
@@ -25,6 +26,7 @@ type SettingsModalProps = {
   onFeedback: () => void;
   onResetPlan: () => void;
   onLogout: () => void;
+  onDeleteAccount: () => void;
 };
 
 
@@ -32,6 +34,7 @@ export default function SettingsModal({
   open,
   userEmail,
   isResetting,
+  isDeletingAccount,
   unitSystem,
   onUnitSystemChange,
   onClose,
@@ -42,6 +45,7 @@ export default function SettingsModal({
   onFeedback,
   onResetPlan,
   onLogout,
+  onDeleteAccount,
 }: SettingsModalProps) {
 
   if (!open) {
@@ -157,6 +161,7 @@ export default function SettingsModal({
             </button>
 
           </div>
+
 
         </section>
 
@@ -463,6 +468,42 @@ export default function SettingsModal({
             onClick={onResetTriCoach}
           >
             Reset everything
+          </button>
+
+        </section>
+
+
+        {/* =============================================
+            ACCOUNT DELETION
+        ============================================= */}
+
+        <section className="settingsV2AccountDeleteRow">
+
+          <div>
+            <span>
+              ACCOUNT DELETION
+            </span>
+
+            <strong>
+              Delete account
+            </strong>
+
+            <p>
+              Permanently remove your account and all
+              associated Basse data.
+            </p>
+          </div>
+
+
+          <button
+            type="button"
+            className="settingsV2DangerButton"
+            disabled={isDeletingAccount}
+            onClick={onDeleteAccount}
+          >
+            {isDeletingAccount
+              ? "Deleting..."
+              : "Delete account"}
           </button>
 
         </section>

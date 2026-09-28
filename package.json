@@ -80,13 +80,14 @@
     "test:openai-safety": "tsx scripts/test-openai-timeout-regression.ts",
     "test:api-security": "npm run test:api-auth && npm run test:api-request && npm run test:openai-safety && npm run test:api-rate-limit",
     "test:database-security": "tsx scripts/test-database-security-regression.ts",
-    "test:security": "npm run test:api-security && npm run test:database-security",
+    "test:security": "npm run test:api-security && npm run test:database-security && npm run test:account-lifecycle",
     "test:ai-plan-scenarios": "tsx scripts/test-ai-plan-scenarios.ts",
     "test:next-week-runtime": "tsx scripts/test-next-week-runtime-regression.ts",
     "test:api-rate-limit": "tsx scripts/test-api-rate-limit-regression.ts",
     "typecheck": "tsc --noEmit",
     "test:ci-config": "tsx scripts/test-ci-config-regression.ts",
-    "test:ci": "npm run test:ci-config && npm run typecheck && npm run lint && npm run test:security && npm run test:coaching-all && npm run build"
+    "test:ci": "npm run test:ci-config && npm run typecheck && npm run lint && npm run test:security && npm run test:coaching-all && npm run build",
+    "test:account-lifecycle": "tsx scripts/test-account-deletion-regression.ts"
   },
   "dependencies": {
     "@bryllim/workout-guide": "^1.0.0",

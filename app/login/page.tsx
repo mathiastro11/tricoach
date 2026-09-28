@@ -491,6 +491,36 @@ export default function LoginPage() {
 
         </div>
 
+
+        <button
+          type="button"
+          onClick={() =>
+            router.push(
+              "/account-deletion"
+            )
+          }
+          style={{
+            display:
+              "block",
+            margin:
+              "18px auto 0",
+            padding:
+              0,
+            border:
+              0,
+            background:
+              "transparent",
+            color:
+              "#6f8477",
+            fontSize:
+              "11px",
+            cursor:
+              "pointer",
+          }}
+        >
+          Account deletion
+        </button>
+
       </section>
 
     </main>

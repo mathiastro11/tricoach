@@ -72803,3 +72803,283 @@ summary {
   }
 
 }
+
+
+/* ===== BASSE ACCOUNT LIFECYCLE V1 ===== */
+
+.settingsV2AccountDeleteRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,.055);
+}
+
+.settingsV2AccountDeleteRow > div {
+  min-width: 0;
+}
+
+.settingsV2AccountDeleteRow strong {
+  display: block;
+  color: rgba(220,229,223,.82);
+  font-size: .86rem;
+  font-weight: 720;
+}
+
+.settingsV2AccountDeleteRow p {
+  max-width: 32rem;
+  margin: .28rem 0 0;
+  color: rgba(173,190,180,.56);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+.settingsV2DangerButton:disabled {
+  opacity: .46;
+  cursor: not-allowed;
+}
+
+.deleteAccountModal {
+  width: min(31rem, calc(100vw - 2rem));
+}
+
+.deleteAccountConfirmation {
+  display: grid;
+  gap: .55rem;
+  margin-top: 1.2rem;
+}
+
+.deleteAccountConfirmation > span {
+  color: rgba(188,202,193,.74);
+  font-size: .78rem;
+  line-height: 1.45;
+}
+
+.deleteAccountConfirmation strong {
+  color: rgba(232,239,235,.94);
+  letter-spacing: .08em;
+}
+
+.deleteAccountConfirmation input {
+  width: 100%;
+  min-height: 3rem;
+  box-sizing: border-box;
+  padding: 0 .9rem;
+  outline: none;
+  border: 1px solid rgba(221,115,105,.28);
+  border-radius: .75rem;
+  background: rgba(8,17,13,.52);
+  color: rgba(237,242,239,.94);
+  font: inherit;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.deleteAccountConfirmation input:focus {
+  border-color: rgba(221,115,105,.62);
+  box-shadow: 0 0 0 3px rgba(221,115,105,.10);
+}
+
+.deleteAccountConfirmation input:disabled {
+  opacity: .55;
+}
+
+.deleteAccountError {
+  margin-top: .8rem;
+  padding: .72rem .8rem;
+  border: 1px solid rgba(221,115,105,.18);
+  border-radius: .7rem;
+  background: rgba(105,34,29,.16);
+  color: rgba(240,184,177,.92);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+.deleteAccountModal .dangerButton:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  filter: saturate(.55);
+}
+
+.accountDeletionPage {
+  min-height: 100dvh;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  padding:
+    max(2rem, env(safe-area-inset-top))
+    1.25rem
+    max(2rem, env(safe-area-inset-bottom));
+  background:
+    radial-gradient(
+      circle at 75% 0%,
+      rgba(90,132,107,.15),
+      transparent 42%
+    ),
+    linear-gradient(
+      160deg,
+      #07110c,
+      #0b1912 58%,
+      #07100c
+    );
+  color: #d5ded8;
+}
+
+.accountDeletionCard {
+  width: min(42rem, 100%);
+  box-sizing: border-box;
+  padding: clamp(1.5rem, 5vw, 3.2rem);
+  border: 1px solid rgba(255,255,255,.075);
+  border-radius: 1.65rem;
+  background:
+    linear-gradient(
+      150deg,
+      rgba(28,47,36,.74),
+      rgba(8,20,14,.84)
+    );
+  box-shadow: 0 2.2rem 6rem rgba(0,0,0,.30);
+}
+
+.accountDeletionBack {
+  display: inline-flex;
+  margin-bottom: 3.25rem;
+  color: rgba(166,187,175,.68);
+  font-size: .78rem;
+  font-weight: 720;
+  text-decoration: none;
+}
+
+.accountDeletionSuccess {
+  margin: -1.4rem 0 2rem;
+  padding: .85rem .95rem;
+  border: 1px solid rgba(153,202,171,.18);
+  border-radius: .8rem;
+  background: rgba(66,123,87,.14);
+  color: rgba(192,224,204,.90);
+  font-size: .8rem;
+  line-height: 1.5;
+}
+
+.accountDeletionEyebrow {
+  display: block;
+  margin-bottom: .8rem;
+  color: rgba(145,178,158,.75);
+  font-size: .67rem;
+  font-weight: 820;
+  letter-spacing: .14em;
+}
+
+.accountDeletionCard h1 {
+  margin: 0;
+  color: rgba(224,233,227,.96);
+  font-size: clamp(2.7rem, 9vw, 4.8rem);
+  font-weight: 610;
+  letter-spacing: -.06em;
+  line-height: .94;
+}
+
+.accountDeletionLead {
+  max-width: 34rem;
+  margin: 1.25rem 0 2rem;
+  color: rgba(173,191,180,.70);
+  font-size: .96rem;
+  line-height: 1.65;
+}
+
+.accountDeletionSteps {
+  display: grid;
+  gap: .75rem;
+  margin: 0 0 1.6rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: deletion-step;
+}
+
+.accountDeletionSteps li {
+  counter-increment: deletion-step;
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  column-gap: .85rem;
+  padding: .9rem 0;
+  border-top: 1px solid rgba(255,255,255,.055);
+}
+
+.accountDeletionSteps li::before {
+  content: counter(deletion-step);
+  grid-row: 1 / span 2;
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border: 1px solid rgba(154,190,168,.20);
+  border-radius: 50%;
+  color: rgba(176,204,187,.82);
+  font-size: .72rem;
+  font-weight: 780;
+}
+
+.accountDeletionSteps strong {
+  color: rgba(216,227,220,.88);
+  font-size: .86rem;
+}
+
+.accountDeletionSteps span {
+  margin-top: .2rem;
+  color: rgba(157,177,165,.61);
+  font-size: .78rem;
+  line-height: 1.5;
+}
+
+.accountDeletionPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 1.1rem;
+  border-radius: .75rem;
+  background: #a6cbb3;
+  color: #102019;
+  font-size: .82rem;
+  font-weight: 820;
+  text-decoration: none;
+}
+
+.accountDeletionData {
+  margin-top: 2rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.accountDeletionData h2 {
+  margin: 0 0 .65rem;
+  color: rgba(211,224,216,.88);
+  font-size: .86rem;
+}
+
+.accountDeletionData p {
+  margin: .55rem 0 0;
+  color: rgba(153,175,162,.62);
+  font-size: .76rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .settingsV2AccountDeleteRow {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .settingsV2AccountDeleteRow .settingsV2DangerButton {
+    width: 100%;
+  }
+
+  .accountDeletionCard {
+    border-radius: 1.25rem;
+  }
+
+  .accountDeletionBack {
+    margin-bottom: 2.4rem;
+  }
+}

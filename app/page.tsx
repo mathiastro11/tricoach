@@ -59,6 +59,7 @@ import Toast, {
   type ToastType,
 } from "@/components/Toast";
 import ConfirmModal from "@/components/ConfirmModal";
+import DeleteAccountModal from "@/components/DeleteAccountModal";
 import WorkoutFeedbackForm from "@/components/WorkoutFeedbackForm";
 import AppFeedbackModal from "@/components/AppFeedbackModal";
 
@@ -1454,6 +1455,21 @@ export default function Home() {
   ] = useState(false);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const [
+    deleteAccountOpen,
+    setDeleteAccountOpen,
+  ] = useState(false);
+
+  const [
+    isDeletingAccount,
+    setIsDeletingAccount,
+  ] = useState(false);
+
+  const [
+    deleteAccountError,
+    setDeleteAccountError,
+  ] = useState("");
 
   const [
     appFeedbackOpen,
@@ -6603,6 +6619,141 @@ export default function Home() {
       );
     }
   }
+
+  function openDeleteAccount() {
+
+    setDeleteAccountError("");
+    setSettingsOpen(false);
+    setDeleteAccountOpen(true);
+  }
+
+
+  async function deleteAccountConfirmed() {
+
+    if (
+      isDeletingAccount
+    ) {
+      return;
+    }
+
+
+    setIsDeletingAccount(true);
+    setDeleteAccountError("");
+
+    /*
+      Disable normal persistence before draining writes.
+      No stale profile or training-state save may race the
+      irreversible auth-user deletion.
+    */
+    setHasRestoredData(false);
+
+
+    try {
+
+      await Promise.all([
+        trainingStateWriteQueueRef.current,
+        profileWriteQueueRef.current,
+      ]);
+
+
+      const response =
+        await fetch(
+          "/api/account",
+          {
+            method:
+              "DELETE",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body:
+              JSON.stringify({
+                confirmation:
+                  "DELETE",
+              }),
+          }
+        );
+
+
+      const data =
+        await response
+          .json()
+          .catch(
+            () => ({})
+          );
+
+
+      if (
+        !response.ok ||
+        data.deleted !== true
+      ) {
+        throw new Error(
+          typeof data.error ===
+            "string"
+            ? data.error
+            : "Basse could not delete your account. Please try again."
+        );
+      }
+
+
+      /*
+        The server has already deleted the authoritative
+        account. Local sign-out is best-effort cleanup of
+        this browser's now-invalid session.
+      */
+      const {
+        error:
+          localSignOutError,
+      } =
+        await supabase.auth
+          .signOut({
+            scope:
+              "local",
+          });
+
+
+      if (
+        localSignOutError
+      ) {
+        console.warn(
+          "Basse deleted the account but local session cleanup reported an error."
+        );
+      }
+
+
+      localStorage.clear();
+      sessionStorage.clear();
+
+
+      /*
+        replace() prevents browser Back from returning to
+        the deleted account's authenticated dashboard.
+      */
+      window.location.replace(
+        "/account-deletion?deleted=1"
+      );
+
+    } catch (error) {
+
+      /*
+        The account still exists when the endpoint fails,
+        so normal persistence must resume.
+      */
+      setHasRestoredData(true);
+
+      setDeleteAccountError(
+        error instanceof Error
+          ? error.message
+          : "Basse could not delete your account. Please try again."
+      );
+
+    } finally {
+      setIsDeletingAccount(false);
+    }
+  }
+
 
   /*
     ==========================================================
@@ -13731,10 +13882,31 @@ export default function Home() {
         }}
       />
 
+      <DeleteAccountModal
+        open={deleteAccountOpen}
+        loading={isDeletingAccount}
+        error={deleteAccountError}
+        onCancel={() => {
+          if (
+            !isDeletingAccount
+          ) {
+            setDeleteAccountOpen(false);
+            setDeleteAccountError("");
+            setSettingsOpen(true);
+          }
+        }}
+        onConfirm={() => {
+          void deleteAccountConfirmed();
+        }}
+      />
+
       <SettingsModal
         open={settingsOpen}
         userEmail={userEmail}
         isResetting={isResetting}
+        isDeletingAccount={
+          isDeletingAccount
+        }
 
         unitSystem={
           athlete.unitSystem ??
@@ -13766,7 +13938,10 @@ export default function Home() {
         }
         onResetPlan={resetTrainingPlan}
         onLogout={logOut}
-      
+        onDeleteAccount={
+          openDeleteAccount
+        }
+
 
         onResetTriCoach={
           resetTriCoach
