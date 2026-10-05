@@ -54,6 +54,24 @@ const packageLock =
     )
   );
 
+const playwrightConfig =
+  readFileSync(
+    "playwright.config.ts",
+    "utf8"
+  );
+
+const browserTest =
+  readFileSync(
+    "tests/e2e/public-surfaces.spec.ts",
+    "utf8"
+  );
+
+const gitignore =
+  readFileSync(
+    ".gitignore",
+    "utf8"
+  );
+
 
 check(
   nodeVersion ===
@@ -130,7 +148,8 @@ for (const command of [
   "npm run lint",
   "npm run test:security",
   "npm run test:coaching-all",
-  "npm run build",
+  "npx playwright install --with-deps chromium webkit",
+  "npm run test:e2e",
 ]) {
   check(
     workflow.includes(command),
@@ -160,6 +179,90 @@ check(
     "cancel-in-progress: true"
   ),
   "CI work is time-bounded and superseded runs are cancelled"
+);
+
+
+check(
+  packageJson
+    .devDependencies?.[
+      "@playwright/test"
+    ] === "1.63.0" &&
+  packageJson
+    .devDependencies?.[
+      "@axe-core/playwright"
+    ] === "4.13.0",
+  "Browser QA dependencies are exactly pinned"
+);
+
+check(
+  packageJson
+    .scripts?.[
+      "test:e2e"
+    ] ===
+      "playwright test" &&
+  packageJson
+    .scripts?.[
+      "test:e2e:install"
+    ] ===
+      "playwright install chromium webkit" &&
+  packageJson
+    .scripts?.[
+      "test:ci"
+    ]?.endsWith(
+      "npm run test:e2e"
+    ),
+  "Local quality gate includes production browser QA"
+);
+
+check(
+  playwrightConfig.includes(
+    "npm run build && npm run start"
+  ) &&
+  playwrightConfig.includes(
+    '"desktop-chromium"'
+  ) &&
+  playwrightConfig.includes(
+    '"android-chromium"'
+  ) &&
+  playwrightConfig.includes(
+    '"iphone-webkit"'
+  ) &&
+  playwrightConfig.includes(
+    '"ipad-webkit"'
+  ),
+  "Browser QA covers production builds and target devices"
+);
+
+check(
+  browserTest.includes(
+    '"/login"'
+  ) &&
+  browserTest.includes(
+    '"/account-deletion"'
+  ) &&
+  browserTest.includes(
+    '"wcag22aa"'
+  ) &&
+  browserTest.includes(
+    '"warning"'
+  ) &&
+  browserTest.includes(
+    "Horizontal overflow detected"
+  ),
+  "Public browser QA covers accessibility and runtime health"
+);
+
+check(
+  gitignore.includes(
+    "/playwright-report/"
+  ) &&
+  gitignore.includes(
+    "/test-results/"
+  ) &&
+  gitignore.includes(
+    "/blob-report/"
+  ),
+  "Browser test artifacts stay outside version control"
 );
 
 

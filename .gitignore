@@ -44,3 +44,8 @@ next-env.d.ts
 # Canonical reusable tooling belongs under scripts/.
 /*.py
 /tricoach-*-audit.txt
+
+# browser testing
+/playwright-report/
+/test-results/
+/blob-report/

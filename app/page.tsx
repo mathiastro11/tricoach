@@ -1012,6 +1012,22 @@ function getRaceAtmosphereClass(
 
 
 
+function isMissingAuthSessionError(
+  error: unknown
+) {
+
+  return (
+    error instanceof Error &&
+    (
+      error.name ===
+        "AuthSessionMissingError" ||
+      error.message ===
+        "Auth session missing!"
+    )
+  );
+}
+
+
 export default function Home() {
   const [screen, setScreen] =
     useState<
@@ -1714,7 +1730,12 @@ export default function Home() {
       }
 
 
-      if (error) {
+      if (
+        error &&
+        !isMissingAuthSessionError(
+          error
+        )
+      ) {
         console.warn(
           "Could not synchronize Supabase auth user:",
           error
@@ -2001,8 +2022,16 @@ export default function Home() {
           error: userError,
         } = await supabase.auth.getUser();
 
-        if (userError) {
-          console.error("Could not verify Supabase user:", userError);
+        if (
+          userError &&
+          !isMissingAuthSessionError(
+            userError
+          )
+        ) {
+          console.error(
+            "Could not verify Supabase user:",
+            userError
+          );
         }
 
         if (user) {

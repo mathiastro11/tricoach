@@ -86,8 +86,10 @@
     "test:api-rate-limit": "tsx scripts/test-api-rate-limit-regression.ts",
     "typecheck": "tsc --noEmit",
     "test:ci-config": "tsx scripts/test-ci-config-regression.ts",
-    "test:ci": "npm run test:ci-config && npm run typecheck && npm run lint && npm run test:security && npm run test:coaching-all && npm run build",
-    "test:account-lifecycle": "tsx scripts/test-account-deletion-regression.ts"
+    "test:ci": "npm run test:ci-config && npm run typecheck && npm run lint && npm run test:security && npm run test:coaching-all && npm run test:e2e",
+    "test:account-lifecycle": "tsx scripts/test-account-deletion-regression.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install chromium webkit"
   },
   "dependencies": {
     "@bryllim/workout-guide": "^1.0.0",
@@ -100,6 +102,8 @@
     "react-icons": "^5.7.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
