@@ -13,6 +13,9 @@ const publicSurfaces = [
 
     path:
       "/",
+
+    status:
+      200,
   },
 
   {
@@ -21,6 +24,9 @@ const publicSurfaces = [
 
     path:
       "/login",
+
+    status:
+      200,
   },
 
   {
@@ -29,6 +35,20 @@ const publicSurfaces = [
 
     path:
       "/account-deletion",
+
+    status:
+      200,
+  },
+
+  {
+    name:
+      "not found",
+
+    path:
+      "/browser-qa-missing-route",
+
+    status:
+      404,
   },
 ] as const;
 
@@ -50,21 +70,41 @@ for (
       const pageErrors:
         string[] = [];
 
+      const networkProblems:
+        string[] = [];
+
 
       page.on(
         "console",
         (message) => {
 
+          const messageType =
+            message.type();
+
+          const messageText =
+            message.text();
+
+          const isExpectedNotFoundDocumentMessage =
+            surface.status ===
+              404 &&
+            messageType ===
+              "error" &&
+            messageText ===
+              "Failed to load resource: the server responded with a status of 404 (Not Found)";
+
           if (
-            message.type() ===
-              "error" ||
-            message.type() ===
-              "warning"
+            !isExpectedNotFoundDocumentMessage &&
+            (
+              messageType ===
+                "error" ||
+              messageType ===
+                "warning"
+            )
           ) {
             consoleProblems.push(
               [
-                message.type(),
-                message.text(),
+                messageType,
+                messageText,
               ].join(
                 ": "
               )
@@ -82,6 +122,52 @@ for (
           pageErrors.push(
             error.message
           );
+
+        }
+      );
+
+
+      page.on(
+        "response",
+        (resourceResponse) => {
+
+          const status =
+            resourceResponse.status();
+
+          if (
+            status <
+            400
+          ) {
+            return;
+          }
+
+          const request =
+            resourceResponse.request();
+
+          const isExpectedNotFoundDocument =
+            surface.status ===
+              404 &&
+            status ===
+              404 &&
+            request.resourceType() ===
+              "document" &&
+            request.isNavigationRequest() &&
+            request.frame() ===
+              page.mainFrame();
+
+          if (
+            !isExpectedNotFoundDocument
+          ) {
+            networkProblems.push(
+              [
+                status,
+                request.resourceType(),
+                resourceResponse.url(),
+              ].join(
+                " "
+              )
+            );
+          }
 
         }
       );
@@ -116,9 +202,11 @@ for (
       ).not.toBeNull();
 
       expect(
-        response?.ok(),
-        `${surface.path} returned HTTP ${response?.status()}`
-      ).toBeTruthy();
+        response?.status(),
+        `${surface.path} returned an unexpected status`
+      ).toBe(
+        surface.status
+      );
 
 
       await page.evaluate(
@@ -234,6 +322,34 @@ for (
       }
 
 
+      if (
+        surface.status ===
+        404
+      ) {
+
+        await expect(
+          page.getByRole(
+            "heading",
+            {
+              name:
+                /This route went off course/i,
+            }
+          )
+        ).toBeVisible();
+
+        await expect(
+          page.getByRole(
+            "link",
+            {
+              name:
+                /Back to Basse/i,
+            }
+          )
+        ).toBeVisible();
+
+      }
+
+
       const dimensions =
         await page.evaluate(
           () => ({
@@ -342,6 +458,13 @@ for (
       expect(
         pageErrors,
         `Uncaught browser errors: ${pageErrors.join(" | ")}`
+      ).toEqual(
+        []
+      );
+
+      expect(
+        networkProblems,
+        `Unexpected HTTP failures: ${networkProblems.join(" | ")}`
       ).toEqual(
         []
       );

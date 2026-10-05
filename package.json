@@ -86,10 +86,11 @@
     "test:api-rate-limit": "tsx scripts/test-api-rate-limit-regression.ts",
     "typecheck": "tsc --noEmit",
     "test:ci-config": "tsx scripts/test-ci-config-regression.ts",
-    "test:ci": "npm run test:ci-config && npm run typecheck && npm run lint && npm run test:security && npm run test:coaching-all && npm run test:e2e",
+    "test:ci": "npm run test:ci-config && npm run test:route-states && npm run typecheck && npm run lint && npm run test:security && npm run test:coaching-all && npm run test:e2e",
     "test:account-lifecycle": "tsx scripts/test-account-deletion-regression.ts",
     "test:e2e": "playwright test",
-    "test:e2e:install": "playwright install chromium webkit"
+    "test:e2e:install": "playwright install chromium webkit",
+    "test:route-states": "tsx scripts/test-route-state-regression.ts"
   },
   "dependencies": {
     "@bryllim/workout-guide": "^1.0.0",

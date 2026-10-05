@@ -73083,3 +73083,332 @@ summary {
     margin-bottom: 2.4rem;
   }
 }
+
+/* ===== BASSE PRODUCTION SYSTEM STATES V1 ===== */
+
+.systemStateGlobalBody {
+  margin: 0;
+  min-height: 100%;
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+  background: #07110c;
+}
+
+.systemStatePage {
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding:
+    max(2rem, env(safe-area-inset-top))
+    1.25rem
+    max(2rem, env(safe-area-inset-bottom));
+  background:
+    radial-gradient(
+      circle at 76% 4%,
+      rgba(101, 151, 119, .18),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 14% 92%,
+      rgba(66, 103, 80, .12),
+      transparent 38%
+    ),
+    linear-gradient(
+      158deg,
+      #06100b,
+      #0b1a12 58%,
+      #07110c
+    );
+  color: #dce7e0;
+}
+
+.systemStatePage::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  opacity: .16;
+  pointer-events: none;
+  background-image:
+    linear-gradient(
+      rgba(192, 218, 201, .08)
+      1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(192, 218, 201, .08)
+      1px,
+      transparent 1px
+    );
+  background-size:
+    72px
+    72px;
+  mask-image:
+    linear-gradient(
+      to bottom,
+      transparent,
+      black 26%,
+      black 74%,
+      transparent
+    );
+}
+
+.systemStateCard {
+  width: min(40rem, 100%);
+  box-sizing: border-box;
+  padding:
+    clamp(1.6rem, 5vw, 3.4rem);
+  border:
+    1px solid
+    rgba(224, 239, 230, .09);
+  border-radius:
+    1.7rem;
+  background:
+    linear-gradient(
+      148deg,
+      rgba(31, 53, 40, .80),
+      rgba(8, 21, 14, .88)
+    );
+  box-shadow:
+    0 2.4rem 6.5rem
+    rgba(0, 0, 0, .34);
+  backdrop-filter:
+    blur(18px);
+  -webkit-backdrop-filter:
+    blur(18px);
+}
+
+.systemStateBrand {
+  display: block;
+  margin-bottom:
+    clamp(2.6rem, 8vw, 4.4rem);
+  color:
+    rgba(190, 211, 198, .76);
+  font-size: .75rem;
+  font-weight: 850;
+  letter-spacing: .15em;
+}
+
+.systemStateSignal {
+  display: grid;
+  place-items: center;
+  width: 4.1rem;
+  height: 4.1rem;
+  margin-bottom: 1.25rem;
+  border:
+    1px solid
+    rgba(174, 213, 188, .22);
+  border-radius: 50%;
+  background:
+    rgba(157, 197, 173, .07);
+  box-shadow:
+    inset 0 0 0 7px
+    rgba(7, 18, 12, .18);
+}
+
+.systemStateSignal span {
+  color: #b9d7c4;
+  font-size: 1rem;
+  font-weight: 850;
+  letter-spacing: .04em;
+}
+
+.systemStateEyebrow {
+  display: block;
+  margin-bottom: .78rem;
+  color: #a4c9b1;
+  font-size: .67rem;
+  font-weight: 850;
+  letter-spacing: .15em;
+}
+
+.systemStateCard h1 {
+  max-width: 34rem;
+  margin: 0;
+  color: #e2ebe5;
+  font-size:
+    clamp(
+      2.55rem,
+      8vw,
+      4.7rem
+    );
+  font-weight: 610;
+  letter-spacing: -.06em;
+  line-height: .96;
+}
+
+.systemStateCopy {
+  max-width: 32rem;
+  margin:
+    1.25rem
+    0
+    0;
+  color:
+    rgba(184, 202, 191, .76);
+  font-size: .96rem;
+  line-height: 1.65;
+}
+
+.systemStateActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .72rem;
+  margin-top: 2rem;
+}
+
+.systemStateActionPrimary,
+.systemStateActionSecondary {
+  min-height: 3.1rem;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.15rem;
+  border-radius: .78rem;
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 820;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform .16s ease,
+    border-color .16s ease,
+    background .16s ease;
+}
+
+.systemStateActionPrimary {
+  border:
+    1px solid
+    #b5d9c1;
+  background: #b5d9c1;
+  color: #0b1b12;
+}
+
+.systemStateActionSecondary {
+  border:
+    1px solid
+    rgba(191, 220, 202, .25);
+  background:
+    rgba(255, 255, 255, .025);
+  color: #cfdfd5;
+}
+
+.systemStateActionPrimary:hover,
+.systemStateActionSecondary:hover {
+  transform:
+    translateY(-1px);
+}
+
+.systemStateActionSecondary:hover {
+  border-color:
+    rgba(191, 220, 202, .42);
+  background:
+    rgba(255, 255, 255, .05);
+}
+
+.systemStateActionPrimary:focus-visible,
+.systemStateActionSecondary:focus-visible {
+  outline:
+    3px solid
+    rgba(197, 229, 207, .58);
+  outline-offset: 3px;
+}
+
+.systemStateLoader {
+  width: 4.1rem;
+  height: 4.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .3rem;
+  margin-bottom: 1.25rem;
+  border:
+    1px solid
+    rgba(174, 213, 188, .22);
+  border-radius: 50%;
+  background:
+    rgba(157, 197, 173, .07);
+}
+
+.systemStateLoader span {
+  width: .38rem;
+  height: .38rem;
+  border-radius: 50%;
+  background: #b9d7c4;
+  animation:
+    systemStateLoading
+    1.15s ease-in-out
+    infinite;
+}
+
+.systemStateLoader span:nth-child(2) {
+  animation-delay: .14s;
+}
+
+.systemStateLoader span:nth-child(3) {
+  animation-delay: .28s;
+}
+
+@keyframes systemStateLoading {
+  0%,
+  70%,
+  100% {
+    opacity: .38;
+    transform:
+      translateY(0);
+  }
+
+  35% {
+    opacity: 1;
+    transform:
+      translateY(-4px);
+  }
+}
+
+@media (max-width: 640px) {
+  .systemStatePage {
+    padding-right: .85rem;
+    padding-left: .85rem;
+  }
+
+  .systemStateCard {
+    padding:
+      1.55rem
+      1.35rem
+      1.7rem;
+    border-radius: 1.3rem;
+  }
+
+  .systemStateBrand {
+    margin-bottom: 2.4rem;
+  }
+
+  .systemStateActions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .systemStateActionPrimary,
+  .systemStateActionSecondary {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .systemStateLoader span {
+    animation: none;
+    opacity: .72;
+  }
+
+  .systemStateActionPrimary,
+  .systemStateActionSecondary {
+    transition: none;
+  }
+}

@@ -144,6 +144,7 @@ check(
 
 for (const command of [
   "npm run test:ci-config",
+  "npm run test:route-states",
   "npm run typecheck",
   "npm run lint",
   "npm run test:security",

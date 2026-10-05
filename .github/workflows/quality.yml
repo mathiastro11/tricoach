@@ -59,6 +59,9 @@ jobs:
       - name: Verify CI configuration
         run: npm run test:ci-config
 
+      - name: Verify production route states
+        run: npm run test:route-states
+
       - name: Type-check
         run: npm run typecheck
 
