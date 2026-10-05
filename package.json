@@ -90,7 +90,8 @@
     "test:account-lifecycle": "tsx scripts/test-account-deletion-regression.ts",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install chromium webkit",
-    "test:route-states": "tsx scripts/test-route-state-regression.ts"
+    "test:route-states": "tsx scripts/test-route-state-regression.ts",
+    "test:e2e:authenticated": "playwright test --config=playwright.authenticated.config.ts"
   },
   "dependencies": {
     "@bryllim/workout-guide": "^1.0.0",
