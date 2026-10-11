@@ -1137,3 +1137,210 @@ export async function readAuthenticatedWorkoutHistory(
     ? data.workout_history as unknown as WorkoutFeedback[]
     : [];
 }
+
+
+
+export async function addAuthenticatedWorkoutLoggingSecondarySession(
+  userId: string
+): Promise<AuthenticatedWorkoutLoggingFixture> {
+
+  const admin =
+    createAdminClient();
+
+
+  const {
+    year,
+    month,
+    day,
+  } =
+    getOsloDateParts();
+
+
+  const today =
+    [
+      String(year).padStart(
+        4,
+        "0"
+      ),
+      String(month).padStart(
+        2,
+        "0"
+      ),
+      String(day).padStart(
+        2,
+        "0"
+      ),
+    ].join(
+      "-"
+    );
+
+
+  const {
+    data,
+    error,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .select(
+        "active_plan"
+      )
+      .eq(
+        "user_id",
+        userId
+      )
+      .single();
+
+
+  if (
+    error ||
+    !data?.active_plan
+  ) {
+    throw new Error(
+      [
+        "Could not read authenticated E2E active plan for secondary session.",
+        error?.message,
+      ]
+        .filter(
+          Boolean
+        )
+        .join(
+          " "
+        )
+    );
+  }
+
+
+  const plan =
+    data.active_plan as unknown as TrainingPlan;
+
+
+  const primaryWorkout =
+    plan.days.find(
+      (workout) =>
+        workout.date ===
+        today
+    );
+
+
+  if (!primaryWorkout) {
+    throw new Error(
+      `Could not find ${today} in authenticated E2E active plan.`
+    );
+  }
+
+
+  const sessionId =
+    `${today}-e2e-workout-logging-secondary`;
+
+  const title =
+    "E2E secondary ride";
+
+  const plannedDurationMinutes =
+    36;
+
+
+  const secondaryWorkout:
+    TrainingPlan["days"][number] = {
+      ...primaryWorkout,
+
+      sessionId,
+
+      date:
+        today,
+
+      sessionSource:
+        "coach",
+
+      sessionRole:
+        "secondary",
+
+      sessionSlot:
+        "PM",
+
+      sport:
+        "Bike",
+
+      title,
+
+      durationMinutes:
+        plannedDurationMinutes,
+
+      intensity:
+        "Easy",
+
+      purpose:
+        "Verify same-day workout logs remain independent.",
+
+      details: [
+        "Ride comfortably at an easy aerobic effort.",
+      ],
+
+      workoutStructure:
+        undefined,
+
+      strengthStructure:
+        undefined,
+    };
+
+
+  const updatedPlan:
+    TrainingPlan = {
+      ...plan,
+
+      additionalSessions: [
+        ...(
+          plan.additionalSessions ??
+          []
+        ).filter(
+          (workout) =>
+            workout.sessionId !==
+            sessionId
+        ),
+
+        secondaryWorkout,
+      ],
+    };
+
+
+  const {
+    error:
+      updateError,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .update({
+        active_plan:
+          updatedPlan,
+
+        updated_at:
+          new Date()
+            .toISOString(),
+      })
+      .eq(
+        "user_id",
+        userId
+      );
+
+
+  if (updateError) {
+    throw new Error(
+      `Could not seed authenticated secondary workout: ${updateError.message}`
+    );
+  }
+
+
+  return {
+    date:
+      today,
+
+    sessionId,
+
+    title,
+
+    plannedDurationMinutes,
+  };
+}

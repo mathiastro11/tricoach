@@ -5,6 +5,7 @@ import {
 } from "@playwright/test";
 
 import {
+  addAuthenticatedWorkoutLoggingSecondarySession,
   createAuthenticatedTestUser,
   deleteAuthenticatedTestUser,
   readAuthenticatedWorkoutHistory,
@@ -1087,6 +1088,928 @@ test(
         }
       )
     ).toBeVisible();
+
+
+    await expectNoDocumentOverflow(
+      page
+    );
+
+
+    expect(
+      unexpectedAiRequests,
+      `Unexpected AI requests: ${unexpectedAiRequests.join(", ")}`
+    ).toEqual(
+      []
+    );
+
+
+    expect(
+      pageErrors,
+      `Page errors: ${pageErrors.join("\n")}`
+    ).toEqual(
+      []
+    );
+
+
+    expect(
+      consoleProblems,
+      `Console problems: ${consoleProblems.join("\n")}`
+    ).toEqual(
+      []
+    );
+
+  }
+);
+
+
+
+test(
+  "same-day workout logs remain isolated through cloud reload",
+  async ({
+    page,
+  }) => {
+
+    if (
+      !testUser ||
+      !workoutFixture
+    ) {
+      throw new Error(
+        "Workout logging E2E fixture was not created."
+      );
+    }
+
+
+    const secondaryFixture =
+      await addAuthenticatedWorkoutLoggingSecondarySession(
+        testUser.id
+      );
+
+
+    expect(
+      secondaryFixture.sessionId
+    ).not.toBe(
+      workoutFixture.sessionId
+    );
+
+
+    const unexpectedAiRequests:
+      string[] =
+        [];
+
+    const pageErrors:
+      string[] =
+        [];
+
+    const consoleProblems:
+      string[] =
+        [];
+
+
+    page.on(
+      "pageerror",
+      (
+        error
+      ) => {
+        pageErrors.push(
+          error.message
+        );
+      }
+    );
+
+
+    page.on(
+      "console",
+      (
+        message
+      ) => {
+
+        if (
+          message.type() ===
+            "error" ||
+          message.type() ===
+            "warning"
+        ) {
+          consoleProblems.push(
+            `${message.type()}: ${message.text()}`
+          );
+        }
+
+      }
+    );
+
+
+    await page.route(
+      /\/api\/(?:coach|goal-change-week|next-week|plan|roadmap)(?:\?|$)/,
+      async (
+        route
+      ) => {
+
+        const url =
+          new URL(
+            route.request().url()
+          );
+
+
+        if (
+          url.pathname ===
+          "/api/next-week"
+        ) {
+
+          await route.fulfill({
+            status:
+              200,
+
+            contentType:
+              "application/json",
+
+            body:
+              JSON.stringify({
+                nextPlan:
+                  buildSafeNextWeekPlan(),
+              }),
+          });
+
+          return;
+        }
+
+
+        unexpectedAiRequests.push(
+          url.pathname
+        );
+
+
+        await route.fulfill({
+          status:
+            503,
+
+          contentType:
+            "application/json",
+
+          body:
+            JSON.stringify({
+              error:
+                "Blocked by same-day workout logging E2E.",
+            }),
+        });
+
+      }
+    );
+
+
+    /*
+      Real authentication.
+    */
+    await page.goto(
+      "/login"
+    );
+
+
+    await page
+      .locator(
+        'input[type="email"]'
+      )
+      .fill(
+        testUser.email
+      );
+
+
+    await page
+      .locator(
+        'input[type="password"]'
+      )
+      .fill(
+        testUser.password
+      );
+
+
+    await page
+      .getByRole(
+        "button",
+        {
+          name:
+            /^Log in/,
+        }
+      )
+      .click();
+
+
+    await expect(
+      page
+    ).toHaveURL(
+      "/"
+    );
+
+
+    await expect(
+      page.locator(
+        ".todayAlpineView"
+      )
+    ).toBeVisible();
+
+
+    const primaryCard =
+      page
+        .locator(
+          ".todayMultiSessionCard"
+        )
+        .filter({
+          hasText:
+            workoutFixture.title,
+        });
+
+
+    const secondaryCard =
+      page
+        .locator(
+          ".todayMultiSessionCard"
+        )
+        .filter({
+          hasText:
+            secondaryFixture.title,
+        });
+
+
+    await expect(
+      primaryCard
+    ).toBeVisible();
+
+
+    await expect(
+      secondaryCard
+    ).toBeVisible();
+
+
+    await expect(
+      primaryCard.getByRole(
+        "button",
+        {
+          name:
+            "Log session",
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      secondaryCard.getByRole(
+        "button",
+        {
+          name:
+            "Log session",
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    /*
+      Log ONLY the primary workout first.
+    */
+    await primaryCard
+      .getByRole(
+        "button",
+        {
+          name:
+            "Log session",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    await page
+      .getByRole(
+        "button",
+        {
+          name:
+            "Completed",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    await page
+      .getByPlaceholder(
+        "Minutes"
+      )
+      .fill(
+        "47"
+      );
+
+
+    await page
+      .locator(
+        ".feedbackRpeSlider"
+      )
+      .fill(
+        "7"
+      );
+
+
+    await page
+      .getByRole(
+        "button",
+        {
+          name:
+            "Great",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    await page
+      .getByPlaceholder(
+        "Anything worth noting?"
+      )
+      .fill(
+        "Primary same-day session."
+      );
+
+
+    await page
+      .getByRole(
+        "button",
+        {
+          name:
+            "Save workout",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    /*
+      Logging A must not change B.
+    */
+    await expect(
+      primaryCard.getByText(
+        "Completed",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      secondaryCard.getByRole(
+        "button",
+        {
+          name:
+            "Log session",
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      secondaryCard.getByText(
+        "Completed",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toHaveCount(
+      0
+    );
+
+
+    /*
+      Cloud must contain exactly one record for A
+      and zero for B.
+    */
+    await expect
+      .poll(
+        async () => {
+
+          const history =
+            await readAuthenticatedWorkoutHistory(
+              testUser!.id
+            );
+
+
+          const primaryMatches =
+            history.filter(
+              (entry) =>
+                entry.sessionId ===
+                workoutFixture!.sessionId
+            );
+
+
+          const secondaryMatches =
+            history.filter(
+              (entry) =>
+                entry.sessionId ===
+                secondaryFixture.sessionId
+            );
+
+
+          return {
+            primaryCount:
+              primaryMatches.length,
+
+            secondaryCount:
+              secondaryMatches.length,
+
+            primaryDuration:
+              primaryMatches[0]
+                ?.actualDurationMinutes ??
+              null,
+
+            primaryComment:
+              primaryMatches[0]
+                ?.comment ??
+              null,
+          };
+
+        },
+        {
+          timeout:
+            15_000,
+        }
+      )
+      .toEqual({
+        primaryCount:
+          1,
+
+        secondaryCount:
+          0,
+
+        primaryDuration:
+          47,
+
+        primaryComment:
+          "Primary same-day session.",
+      });
+
+
+    /*
+      Cold reload from cloud.
+
+      A must remain completed while B must remain unlogged.
+    */
+    await page.evaluate(
+      () => {
+
+        for (
+          const key
+          of Object.keys(
+            localStorage
+          )
+        ) {
+
+          if (
+            key.startsWith(
+              "tricoach-"
+            )
+          ) {
+            localStorage.removeItem(
+              key
+            );
+          }
+
+        }
+
+      }
+    );
+
+
+    await page.reload();
+
+
+    await expect(
+      page.locator(
+        ".todayAlpineView"
+      )
+    ).toBeVisible();
+
+
+    const restoredPrimaryCard =
+      page
+        .locator(
+          ".todayMultiSessionCard"
+        )
+        .filter({
+          hasText:
+            workoutFixture.title,
+        });
+
+
+    const restoredSecondaryCard =
+      page
+        .locator(
+          ".todayMultiSessionCard"
+        )
+        .filter({
+          hasText:
+            secondaryFixture.title,
+        });
+
+
+    await expect(
+      restoredPrimaryCard.getByText(
+        "Completed",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      restoredSecondaryCard.getByRole(
+        "button",
+        {
+          name:
+            "Log session",
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    /*
+      Now log B.
+
+      A must remain unchanged.
+    */
+    await restoredSecondaryCard
+      .getByRole(
+        "button",
+        {
+          name:
+            "Log session",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    await page
+      .getByRole(
+        "button",
+        {
+          name:
+            "Completed",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    await page
+      .getByPlaceholder(
+        "Minutes"
+      )
+      .fill(
+        "39"
+      );
+
+
+    await page
+      .locator(
+        ".feedbackRpeSlider"
+      )
+      .fill(
+        "5"
+      );
+
+
+    await page
+      .getByRole(
+        "button",
+        {
+          name:
+            "Normal",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    await page
+      .getByPlaceholder(
+        "Anything worth noting?"
+      )
+      .fill(
+        "Secondary same-day session."
+      );
+
+
+    await page
+      .getByRole(
+        "button",
+        {
+          name:
+            "Save workout",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    await expect(
+      restoredPrimaryCard.getByText(
+        "Completed",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      restoredSecondaryCard.getByText(
+        "Completed",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    /*
+      There must now be exactly one record per sessionId.
+      Primary data must be unchanged by logging secondary.
+    */
+    await expect
+      .poll(
+        async () => {
+
+          const history =
+            await readAuthenticatedWorkoutHistory(
+              testUser!.id
+            );
+
+
+          const primaryMatches =
+            history.filter(
+              (entry) =>
+                entry.sessionId ===
+                workoutFixture!.sessionId
+            );
+
+
+          const secondaryMatches =
+            history.filter(
+              (entry) =>
+                entry.sessionId ===
+                secondaryFixture.sessionId
+            );
+
+
+          const primary =
+            primaryMatches[0];
+
+          const secondary =
+            secondaryMatches[0];
+
+
+          return {
+            primaryCount:
+              primaryMatches.length,
+
+            secondaryCount:
+              secondaryMatches.length,
+
+            primaryId:
+              primary?.id ??
+              null,
+
+            secondaryId:
+              secondary?.id ??
+              null,
+
+            primaryDuration:
+              primary?.actualDurationMinutes ??
+              null,
+
+            primaryRpe:
+              primary?.rpe ??
+              null,
+
+            primaryComment:
+              primary?.comment ??
+              null,
+
+            secondaryDuration:
+              secondary?.actualDurationMinutes ??
+              null,
+
+            secondaryRpe:
+              secondary?.rpe ??
+              null,
+
+            secondaryComment:
+              secondary?.comment ??
+              null,
+          };
+
+        },
+        {
+          timeout:
+            15_000,
+        }
+      )
+      .toMatchObject({
+        primaryCount:
+          1,
+
+        secondaryCount:
+          1,
+
+        primaryDuration:
+          47,
+
+        primaryRpe:
+          7,
+
+        primaryComment:
+          "Primary same-day session.",
+
+        secondaryDuration:
+          39,
+
+        secondaryRpe:
+          5,
+
+        secondaryComment:
+          "Secondary same-day session.",
+      });
+
+
+    const finalHistory =
+      await readAuthenticatedWorkoutHistory(
+        testUser.id
+      );
+
+
+    const finalPrimary =
+      finalHistory.find(
+        (entry) =>
+          entry.sessionId ===
+          workoutFixture!.sessionId
+      );
+
+
+    const finalSecondary =
+      finalHistory.find(
+        (entry) =>
+          entry.sessionId ===
+          secondaryFixture.sessionId
+      );
+
+
+    expect(
+      finalPrimary?.id
+    ).toBeTruthy();
+
+
+    expect(
+      finalSecondary?.id
+    ).toBeTruthy();
+
+
+    expect(
+      finalPrimary?.id
+    ).not.toBe(
+      finalSecondary?.id
+    );
+
+
+    /*
+      Second cold reload proves both identities and statuses
+      reconstruct correctly from persisted cloud state.
+    */
+    await page.evaluate(
+      () => {
+
+        for (
+          const key
+          of Object.keys(
+            localStorage
+          )
+        ) {
+
+          if (
+            key.startsWith(
+              "tricoach-"
+            )
+          ) {
+            localStorage.removeItem(
+              key
+            );
+          }
+
+        }
+
+      }
+    );
+
+
+    await page.reload();
+
+
+    await expect(
+      page.locator(
+        ".todayAlpineView"
+      )
+    ).toBeVisible();
+
+
+    const finalPrimaryCard =
+      page
+        .locator(
+          ".todayMultiSessionCard"
+        )
+        .filter({
+          hasText:
+            workoutFixture.title,
+        });
+
+
+    const finalSecondaryCard =
+      page
+        .locator(
+          ".todayMultiSessionCard"
+        )
+        .filter({
+          hasText:
+            secondaryFixture.title,
+        });
+
+
+    await expect(
+      finalPrimaryCard.getByText(
+        "Completed",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      finalSecondaryCard.getByText(
+        "Completed",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      finalPrimaryCard.getByRole(
+        "button",
+        {
+          name:
+            "Log session",
+          exact:
+            true,
+        }
+      )
+    ).toHaveCount(
+      0
+    );
+
+
+    await expect(
+      finalSecondaryCard.getByRole(
+        "button",
+        {
+          name:
+            "Log session",
+          exact:
+            true,
+        }
+      )
+    ).toHaveCount(
+      0
+    );
 
 
     await expectNoDocumentOverflow(
