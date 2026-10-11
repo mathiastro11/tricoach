@@ -70100,11 +70100,44 @@ button.nextWeekSessionMini:hover {
 .completedWorkoutDetailsModal
 .sessionExtraNotes,
 .completedWorkoutDetailsModal
-.coachAdjustmentNotice,
+.coachAdjustmentNotice {
+  display:
+    none !important;
+}
+
+
+/*
+  A completed workout is primarily a training record,
+  but the athlete must still be able to correct their
+  own current-week log.
+
+  Keep the generic More menu hidden so completed sessions
+  do not regain adaptation / movement controls.
+*/
 .completedWorkoutDetailsModal
 .sessionPrimaryActions {
   display:
+    flex !important;
+
+  margin-top:
+    .85rem;
+
+  padding-top:
+    .85rem;
+}
+
+
+.completedWorkoutDetailsModal
+.sessionMoreWrap {
+  display:
     none !important;
+}
+
+
+.completedWorkoutDetailsModal
+.sessionLoggedState {
+  width:
+    100%;
 }
 
 

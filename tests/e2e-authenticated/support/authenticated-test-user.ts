@@ -869,3 +869,271 @@ export async function seedAuthenticatedTestUserState(
   }
 
 }
+
+
+export type AuthenticatedWorkoutLoggingFixture = {
+  date: string;
+  sessionId: string;
+  title: string;
+  plannedDurationMinutes: number;
+};
+
+
+export async function seedAuthenticatedWorkoutLoggingState(
+  userId: string
+): Promise<AuthenticatedWorkoutLoggingFixture> {
+
+  await seedAuthenticatedTestUserState(
+    userId
+  );
+
+
+  const admin =
+    createAdminClient();
+
+
+  const {
+    year,
+    month,
+    day,
+  } =
+    getOsloDateParts();
+
+
+  const today =
+    [
+      String(year).padStart(
+        4,
+        "0"
+      ),
+      String(month).padStart(
+        2,
+        "0"
+      ),
+      String(day).padStart(
+        2,
+        "0"
+      ),
+    ].join(
+      "-"
+    );
+
+
+  const {
+    data,
+    error,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .select(
+        "active_plan"
+      )
+      .eq(
+        "user_id",
+        userId
+      )
+      .single();
+
+
+  if (
+    error ||
+    !data?.active_plan
+  ) {
+    throw new Error(
+      [
+        "Could not read authenticated E2E active plan.",
+        error?.message,
+      ]
+        .filter(
+          Boolean
+        )
+        .join(
+          " "
+        )
+    );
+  }
+
+
+  const plan =
+    data.active_plan as unknown as TrainingPlan;
+
+
+  const todayIndex =
+    plan.days.findIndex(
+      (workout) =>
+        workout.date ===
+        today
+    );
+
+
+  if (
+    todayIndex <
+    0
+  ) {
+    throw new Error(
+      `Could not find ${today} in authenticated E2E active plan.`
+    );
+  }
+
+
+  const originalWorkout =
+    plan.days[
+      todayIndex
+    ];
+
+
+  const sessionId =
+    `${today}-e2e-workout-logging-primary`;
+
+  const title =
+    "E2E persistence run";
+
+  const plannedDurationMinutes =
+    42;
+
+
+  const loggingWorkout:
+    TrainingPlan["days"][number] = {
+      ...originalWorkout,
+
+      sessionId,
+
+      date:
+        today,
+
+      sessionSource:
+        "coach",
+
+      sessionRole:
+        "primary",
+
+      sessionSlot:
+        "Flexible",
+
+      sport:
+        "Run",
+
+      title,
+
+      durationMinutes:
+        plannedDurationMinutes,
+
+      intensity:
+        "Easy",
+
+      purpose:
+        "Verify workout logging and cloud persistence.",
+
+      details: [
+        "Run comfortably at an easy aerobic effort.",
+      ],
+
+      workoutStructure:
+        undefined,
+
+      strengthStructure:
+        undefined,
+    };
+
+
+  const updatedPlan:
+    TrainingPlan = {
+      ...plan,
+
+      days:
+        plan.days.map(
+          (
+            workout,
+            index
+          ) =>
+            index ===
+            todayIndex
+              ? loggingWorkout
+              : workout
+        ),
+  };
+
+
+  const {
+    error:
+      updateError,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .update({
+        active_plan:
+          updatedPlan,
+
+        updated_at:
+          new Date()
+            .toISOString(),
+      })
+      .eq(
+        "user_id",
+        userId
+      );
+
+
+  if (updateError) {
+    throw new Error(
+      `Could not seed authenticated workout logging state: ${updateError.message}`
+    );
+  }
+
+
+  return {
+    date:
+      today,
+
+    sessionId,
+
+    title,
+
+    plannedDurationMinutes,
+  };
+}
+
+
+export async function readAuthenticatedWorkoutHistory(
+  userId: string
+): Promise<WorkoutFeedback[]> {
+
+  const admin =
+    createAdminClient();
+
+
+  const {
+    data,
+    error,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .select(
+        "workout_history"
+      )
+      .eq(
+        "user_id",
+        userId
+      )
+      .single();
+
+
+  if (error) {
+    throw new Error(
+      `Could not read authenticated E2E workout history: ${error.message}`
+    );
+  }
+
+
+  return Array.isArray(
+    data?.workout_history
+  )
+    ? data.workout_history as unknown as WorkoutFeedback[]
+    : [];
+}
