@@ -558,6 +558,61 @@ test(
 
 
     /*
+      Capture the original persisted feedback identity.
+
+      Editing the workout later must UPDATE this record,
+      not create a second feedback entry.
+    */
+    const initialHistory =
+      await readAuthenticatedWorkoutHistory(
+        testUser.id
+      );
+
+
+    const initialMatches =
+      initialHistory.filter(
+        (entry) =>
+          entry.sessionId ===
+          workoutFixture!.sessionId
+      );
+
+
+    expect(
+      initialMatches
+    ).toHaveLength(
+      1
+    );
+
+
+    const initialFeedback =
+      initialMatches[0];
+
+
+    if (!initialFeedback) {
+      throw new Error(
+        "Initial persisted workout feedback was not found."
+      );
+    }
+
+
+    const originalFeedbackId =
+      initialFeedback.id;
+
+    const originalCompletedAt =
+      initialFeedback.completedAt;
+
+
+    expect(
+      originalFeedbackId
+    ).toBeTruthy();
+
+
+    expect(
+      originalCompletedAt
+    ).toBeTruthy();
+
+
+    /*
       Remove only Basse application state.
 
       Supabase authentication storage is intentionally
@@ -666,6 +721,359 @@ test(
     ).toContainText(
       "Completed"
     );
+
+
+    const editLogButton =
+      page.getByRole(
+        "button",
+        {
+          name:
+            "Edit log",
+          exact:
+            true,
+        }
+      );
+
+
+    await expect(
+      editLogButton
+    ).toBeVisible();
+
+
+    /*
+      Open the real edit flow.
+
+      Existing values must be restored into the form before
+      the athlete changes anything.
+    */
+    await editLogButton.click();
+
+
+    await expect(
+      page.getByRole(
+        "heading",
+        {
+          name:
+            "How did it go?",
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      page.getByPlaceholder(
+        "Minutes"
+      )
+    ).toHaveValue(
+      "44"
+    );
+
+
+    await expect(
+      page.locator(
+        ".feedbackRpeSlider"
+      )
+    ).toHaveValue(
+      "6"
+    );
+
+
+    await expect(
+      page.getByPlaceholder(
+        "Anything worth noting?"
+      )
+    ).toHaveValue(
+      "Persistence verified by E2E."
+    );
+
+
+    /*
+      Edit several independent fields so a false-positive
+      persistence result is very unlikely.
+    */
+    await page
+      .getByPlaceholder(
+        "Minutes"
+      )
+      .fill(
+        "51"
+      );
+
+
+    await page
+      .locator(
+        ".feedbackRpeSlider"
+      )
+      .fill(
+        "8"
+      );
+
+
+    await page
+      .getByRole(
+        "button",
+        {
+          name:
+            "Heavy",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    await page
+      .getByPlaceholder(
+        "Anything worth noting?"
+      )
+      .fill(
+        "Edited persistence verified by E2E."
+      );
+
+
+    await page
+      .getByRole(
+        "button",
+        {
+          name:
+            "Save workout",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    /*
+      Supabase must contain exactly ONE feedback record for
+      this session.
+
+      Editing must preserve record identity and original
+      completion timestamp while replacing mutable values.
+    */
+    await expect
+      .poll(
+        async () => {
+
+          const history =
+            await readAuthenticatedWorkoutHistory(
+              testUser!.id
+            );
+
+
+          const matches =
+            history.filter(
+              (entry) =>
+                entry.sessionId ===
+                workoutFixture!.sessionId
+            );
+
+
+          const feedback =
+            matches[0];
+
+
+          return {
+            count:
+              matches.length,
+
+            id:
+              feedback?.id ??
+              null,
+
+            completedAt:
+              feedback?.completedAt ??
+              null,
+
+            status:
+              feedback?.status ??
+              null,
+
+            actualDurationMinutes:
+              feedback?.actualDurationMinutes ??
+              null,
+
+            rpe:
+              feedback?.rpe ??
+              null,
+
+            feeling:
+              feedback?.feeling ??
+              null,
+
+            comment:
+              feedback?.comment ??
+              null,
+          };
+
+        },
+        {
+          timeout:
+            15_000,
+        }
+      )
+      .toEqual({
+        count:
+          1,
+
+        id:
+          originalFeedbackId,
+
+        completedAt:
+          originalCompletedAt,
+
+        status:
+          "Completed",
+
+        actualDurationMinutes:
+          51,
+
+        rpe:
+          8,
+
+        feeling:
+          "Heavy",
+
+        comment:
+          "Edited persistence verified by E2E.",
+      });
+
+
+    /*
+      Prove the EDITED values also survive a cold Basse
+      application-state reload from cloud.
+    */
+    await page.evaluate(
+      () => {
+
+        for (
+          const key
+          of Object.keys(
+            localStorage
+          )
+        ) {
+
+          if (
+            key.startsWith(
+              "tricoach-"
+            )
+          ) {
+            localStorage.removeItem(
+              key
+            );
+          }
+
+        }
+
+      }
+    );
+
+
+    await page.reload();
+
+
+    await expect(
+      page.locator(
+        ".todayAlpineView"
+      )
+    ).toBeVisible();
+
+
+    const editedRestoredSessionCard =
+      page
+        .locator(
+          ".todayMultiSessionCard"
+        )
+        .filter({
+          hasText:
+            workoutFixture.title,
+        });
+
+
+    await expect(
+      editedRestoredSessionCard
+    ).toBeVisible();
+
+
+    await expect(
+      editedRestoredSessionCard.getByText(
+        "Completed",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await editedRestoredSessionCard
+      .getByRole(
+        "button",
+        {
+          name:
+            "View session →",
+          exact:
+            true,
+        }
+      )
+      .click();
+
+
+    const completedRecord =
+      page.locator(
+        ".completedWorkoutRecord"
+      );
+
+
+    await expect(
+      completedRecord
+    ).toBeVisible();
+
+
+    await expect(
+      completedRecord.getByText(
+        "51 min",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      completedRecord.getByText(
+        "8/10",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      completedRecord.getByText(
+        "Heavy",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
+
+
+    await expect(
+      completedRecord.getByText(
+        "Edited persistence verified by E2E.",
+        {
+          exact:
+            true,
+        }
+      )
+    ).toBeVisible();
 
 
     await expect(
