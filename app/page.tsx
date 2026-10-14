@@ -2561,6 +2561,60 @@ export default function Home() {
           }
 
 
+          let localNextWeekPreview:
+            TrainingPlan | null =
+              null;
+
+          const savedNextWeekPreviewRaw =
+            localStorage.getItem(
+              "tricoach-next-week-preview"
+            );
+
+          if (savedNextWeekPreviewRaw) {
+            try {
+              localNextWeekPreview =
+                attachWeekDates(
+                  JSON.parse(
+                    savedNextWeekPreviewRaw
+                  )
+                );
+            } catch (error) {
+              console.error(
+                "Could not restore local next-week preview:",
+                error
+              );
+            }
+          }
+
+
+          let localTrainingAvailability =
+            [] as typeof trainingAvailability;
+
+          const savedTrainingAvailabilityRaw =
+            localStorage.getItem(
+              "tricoach-training-availability"
+            );
+
+          if (savedTrainingAvailabilityRaw) {
+            try {
+              const parsed =
+                JSON.parse(
+                  savedTrainingAvailabilityRaw
+                );
+
+              localTrainingAvailability =
+                Array.isArray(parsed)
+                  ? parsed
+                  : [];
+            } catch (error) {
+              console.error(
+                "Could not restore local training availability:",
+                error
+              );
+            }
+          }
+
+
           function planWeekTime(
             plan:
               TrainingPlan | null
@@ -2681,11 +2735,37 @@ export default function Home() {
                   : [];
 
 
+          const cloudNextWeekPreview:
+            TrainingPlan | null =
+              trainingData?.next_week_preview
+                ? attachWeekDates(
+                    trainingData.next_week_preview
+                  )
+                : null;
+
+
+          const authoritativeNextWeekPreview:
+            TrainingPlan | null =
+              localPlanIsNewer
+                ? localNextWeekPreview
+                : cloudNextWeekPreview;
+
+
+          const authoritativeTrainingAvailability =
+            localPlanIsNewer
+              ? localTrainingAvailability
+              : Array.isArray(
+                  trainingData?.training_availability
+                )
+                ? trainingData.training_availability
+                : [];
+
+
           /*
             WEEK ROLLOVER ON RESTORE
 
-            Next Week is persisted locally as a provisional
-            calendar week.
+            Next Week is persisted as part of the authoritative
+            training-state bundle.
 
             If the stored active plan belongs to an older
             week and the provisional plan now matches the
@@ -2701,34 +2781,10 @@ export default function Home() {
             );
 
 
-          const savedNextWeekPreviewRaw =
-            localStorage.getItem(
-              "tricoach-next-week-preview"
-            );
-
-
           let restoredNextWeekPreview:
             TrainingPlan | null =
-              null;
+              authoritativeNextWeekPreview;
 
-
-          if (
-            savedNextWeekPreviewRaw
-          ) {
-            try {
-              restoredNextWeekPreview =
-                attachWeekDates(
-                  JSON.parse(
-                    savedNextWeekPreviewRaw
-                  )
-                );
-            } catch (error) {
-              console.error(
-                "Could not restore next-week preview:",
-                error
-              );
-            }
-          }
 
 
           const activeWeekTime =
@@ -2926,48 +2982,19 @@ export default function Home() {
           );
 
           /*
-            CALENDAR / NEXT WEEK LOCAL HYDRATION FOR AUTH USER
+            CALENDAR / NEXT WEEK HYDRATION
 
-            These states are currently persisted locally and
-            are not yet columns in training_state.
+            Restore the same authoritative planning context as
+            the active plan so phone, tablet and a fresh install
+            cannot silently diverge.
           */
-          if (
+          setNextWeekPreview(
             restoredNextWeekPreview
-          ) {
-            setNextWeekPreview(
-              restoredNextWeekPreview
-            );
-          } else {
-            setNextWeekPreview(
-              null
-            );
-          }
+          );
 
-          const savedTrainingAvailability =
-            localStorage.getItem(
-              "tricoach-training-availability"
-            );
-
-          if (savedTrainingAvailability) {
-            try {
-              const restoredAvailability =
-                JSON.parse(
-                  savedTrainingAvailability
-                );
-
-              setTrainingAvailability(
-                Array.isArray(restoredAvailability)
-                  ? restoredAvailability
-                  : []
-              );
-            } catch (error) {
-              console.error(
-                "Could not restore training availability:",
-                error
-              );
-              setTrainingAvailability([]);
-            }
-          }
+          setTrainingAvailability(
+            authoritativeTrainingAvailability
+          );
 
           setDbReady(true);
         } else {
@@ -3590,6 +3617,8 @@ export default function Home() {
         roadmap_revisions: roadmapRevisions,
         readiness_history: readinessHistory,
         weekly_review: weeklyReview,
+        next_week_preview: nextWeekPreview,
+        training_availability: trainingAvailability,
         updated_at: new Date().toISOString(),
       };
 
@@ -3642,6 +3671,8 @@ export default function Home() {
     roadmapRevisions,
     readinessHistory,
     weeklyReview,
+    nextWeekPreview,
+    trainingAvailability,
     hasRestoredData,
     userId,
     dbReady,
@@ -8710,6 +8741,12 @@ export default function Home() {
                 weekly_review:
                   null,
 
+                next_week_preview:
+                  null,
+
+                training_availability:
+                  trainingAvailability,
+
                 updated_at:
                   new Date()
                     .toISOString(),
@@ -9101,6 +9138,12 @@ export default function Home() {
 
               weekly_review:
                 null,
+
+              next_week_preview:
+                null,
+
+              training_availability:
+                [],
 
               updated_at:
                 new Date()

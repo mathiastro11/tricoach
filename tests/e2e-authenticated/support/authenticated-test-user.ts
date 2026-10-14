@@ -13,6 +13,7 @@ import {
 import type {
   ReadinessEntry,
   SeasonRoadmap,
+  TrainingAvailability,
   TrainingPlan,
   WeeklyReview,
   WorkoutFeedback,
@@ -251,6 +252,112 @@ function getCurrentOsloWeekStart() {
   return toIsoDate(
     current
   );
+}
+
+
+
+function buildAuthenticatedCloudNextWeekPreview(
+  currentWeekStart: string,
+  marker =
+    "Authenticated E2E cloud session"
+): TrainingPlan {
+
+  const weekStart =
+    addDays(
+      currentWeekStart,
+      7
+    );
+
+  const weekdays = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
+  return {
+    summary:
+      "Deterministic cloud-backed next-week preview for authenticated E2E.",
+
+    totalHours:
+      0.75,
+
+    focus:
+      "Cross-device planning continuity",
+
+    weekNumber:
+      2,
+
+    weekStart,
+
+    days:
+      weekdays.map(
+        (
+          day,
+          index
+        ) => ({
+          sessionId:
+            `${weekStart}-${index}-cloud-context`,
+
+          day,
+
+          date:
+            addDays(
+              weekStart,
+              index
+            ),
+
+          sessionSource:
+            "coach",
+
+          sessionRole:
+            "primary",
+
+          sessionSlot:
+            "Flexible",
+
+          sport:
+            index === 1
+              ? "Run"
+              : "Rest",
+
+          title:
+            index === 1
+              ? marker
+              : "Cloud recovery day",
+
+          durationMinutes:
+            index === 1
+              ? 45
+              : 0,
+
+          intensity:
+            index === 1
+              ? "Easy"
+              : "Recovery",
+
+          purpose:
+            index === 1
+              ? "Verify cloud-backed Next Week continuity."
+              : "Keep the deterministic test week simple.",
+
+          details:
+            index === 1
+              ? [
+                  "Easy controlled running.",
+                ]
+              : [
+                  "No structured training.",
+                ],
+        })
+      ),
+
+    additionalSessions:
+      [],
+  };
 }
 
 
@@ -851,6 +958,14 @@ export async function seedAuthenticatedTestUserState(
           weekly_review:
             weeklyReview,
 
+          next_week_preview:
+            buildAuthenticatedCloudNextWeekPreview(
+              weekStart
+            ),
+
+          training_availability:
+            [],
+
           updated_at:
             now,
         },
@@ -1342,5 +1457,542 @@ export async function addAuthenticatedWorkoutLoggingSecondarySession(
     title,
 
     plannedDurationMinutes,
+  };
+}
+
+
+export type AuthenticatedCrossDeviceTrainingContextFixture = {
+  nextWeekPreview: TrainingPlan;
+  trainingAvailability: TrainingAvailability[];
+};
+
+
+export async function seedAuthenticatedCrossDeviceTrainingContext(
+  userId: string
+): Promise<AuthenticatedCrossDeviceTrainingContextFixture> {
+
+  await seedAuthenticatedTestUserState(
+    userId
+  );
+
+
+  const admin =
+    createAdminClient();
+
+  const currentWeekStart =
+    getCurrentOsloWeekStart();
+
+  const nextWeekPreview =
+    buildAuthenticatedCloudNextWeekPreview(
+      currentWeekStart,
+      "Cross-device cloud run"
+    );
+
+  const trainingAvailability:
+    TrainingAvailability[] = [
+      {
+        date:
+          addDays(
+            currentWeekStart,
+            9
+          ),
+
+        status:
+          "Limited",
+
+        allowedSports:
+          [
+            "Swim",
+          ],
+
+        maxDurationMinutes:
+          45,
+
+        note:
+          "Cross-device E2E swim-only window.",
+      },
+
+      {
+        date:
+          addDays(
+            currentWeekStart,
+            12
+          ),
+
+        status:
+          "Unavailable",
+
+        note:
+          "Cross-device E2E unavailable day.",
+      },
+    ];
+
+
+  const {
+    error,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .update({
+        next_week_preview:
+          nextWeekPreview,
+
+        training_availability:
+          trainingAvailability,
+
+        updated_at:
+          new Date()
+            .toISOString(),
+      })
+      .eq(
+        "user_id",
+        userId
+      );
+
+
+  if (error) {
+    throw new Error(
+      `Could not seed cross-device training context: ${error.message}`
+    );
+  }
+
+
+  return {
+    nextWeekPreview,
+    trainingAvailability,
+  };
+}
+
+
+export async function readAuthenticatedTrainingContext(
+  userId: string
+): Promise<{
+  nextWeekPreview: TrainingPlan | null;
+  trainingAvailability: TrainingAvailability[];
+}> {
+
+  const admin =
+    createAdminClient();
+
+
+  const {
+    data,
+    error,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .select(
+        "next_week_preview,training_availability"
+      )
+      .eq(
+        "user_id",
+        userId
+      )
+      .single();
+
+
+  if (error) {
+    throw new Error(
+      `Could not read authenticated training context: ${error.message}`
+    );
+  }
+
+
+  return {
+    nextWeekPreview:
+      data?.next_week_preview
+        ? data.next_week_preview as unknown as TrainingPlan
+        : null,
+
+    trainingAvailability:
+      Array.isArray(
+        data?.training_availability
+      )
+        ? data.training_availability as unknown as TrainingAvailability[]
+        : [],
+  };
+}
+
+
+export type AuthenticatedWeekRolloverFixture = {
+  previousWeekStart: string;
+  currentWeekStart: string;
+  outgoingPlan: TrainingPlan;
+  outgoingFeedback: WorkoutFeedback[];
+  outgoingReview: WeeklyReview;
+  promotedPlan: TrainingPlan;
+  trainingAvailability: TrainingAvailability[];
+};
+
+
+export async function seedAuthenticatedWeekRolloverState(
+  userId: string
+): Promise<AuthenticatedWeekRolloverFixture> {
+
+  await seedAuthenticatedTestUserState(
+    userId
+  );
+
+
+  const admin =
+    createAdminClient();
+
+
+  const {
+    data,
+    error,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .select(
+        "active_plan,workout_history,weekly_review"
+      )
+      .eq(
+        "user_id",
+        userId
+      )
+      .single();
+
+
+  if (
+    error ||
+    !data?.active_plan ||
+    !data?.weekly_review
+  ) {
+    throw new Error(
+      [
+        "Could not prepare authenticated rollover fixture.",
+        error?.message,
+      ]
+        .filter(
+          Boolean
+        )
+        .join(
+          " "
+        )
+    );
+  }
+
+
+  const currentPlan =
+    data.active_plan as unknown as TrainingPlan;
+
+  if (!currentPlan.weekStart) {
+    throw new Error(
+      "Authenticated rollover fixture is missing current weekStart."
+    );
+  }
+
+
+  const currentWeekStart =
+    currentPlan.weekStart;
+
+  const previousWeekStart =
+    addDays(
+      currentWeekStart,
+      -7
+    );
+
+
+  /*
+    Build the genuinely outgoing week.
+
+    Dates and session IDs belong to the previous calendar week,
+    while the prescription remains deterministic.
+  */
+  const outgoingPlan:
+    TrainingPlan = {
+      ...currentPlan,
+
+      summary:
+        "Deterministic outgoing week for rollover E2E.",
+
+      focus:
+        "Outgoing rollover context",
+
+      weekStart:
+        previousWeekStart,
+
+      weekNumber:
+        Math.max(
+          1,
+          Number(
+            currentPlan.weekNumber ??
+            2
+          ) - 1
+        ),
+
+      days:
+        currentPlan.days.map(
+          (
+            session,
+            index
+          ) => ({
+            ...session,
+
+            sessionId:
+              `${previousWeekStart}-${index}-rollover-outgoing`,
+
+            date:
+              addDays(
+                previousWeekStart,
+                index
+              ),
+          })
+        ),
+
+      additionalSessions:
+        [],
+    };
+
+
+  /*
+    This preview now matches the real current calendar week.
+
+    Restore must promote it instead of generating another
+    current-week plan.
+  */
+  const promotedPlan:
+    TrainingPlan = {
+      ...currentPlan,
+
+      summary:
+        "Deterministic current-week preview for rollover E2E.",
+
+      focus:
+        "Promoted rollover week",
+
+      days:
+        currentPlan.days.map(
+          (
+            session,
+            index
+          ) => ({
+            ...session,
+
+            title:
+              index === 2
+                ? "Promoted rollover swim"
+                : session.title,
+          })
+        ),
+    };
+
+
+  const outgoingFeedback =
+    Array.isArray(
+      data.workout_history
+    )
+      ? data.workout_history as unknown as WorkoutFeedback[]
+      : [];
+
+
+  const outgoingReview =
+    data.weekly_review as unknown as WeeklyReview;
+
+
+  /*
+    Hard Calendar constraints that are valid for the promoted
+    current-week plan and must survive rollover unchanged.
+  */
+  const trainingAvailability:
+    TrainingAvailability[] = [
+      {
+        date:
+          addDays(
+            currentWeekStart,
+            0
+          ),
+
+        status:
+          "Unavailable",
+
+        note:
+          "Rollover E2E rest-only Monday.",
+      },
+
+      {
+        date:
+          addDays(
+            currentWeekStart,
+            2
+          ),
+
+        status:
+          "Limited",
+
+        allowedSports:
+          [
+            "Swim",
+          ],
+
+        maxDurationMinutes:
+          45,
+
+        note:
+          "Rollover E2E swim window.",
+      },
+    ];
+
+
+  const {
+    error:
+      updateError,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .update({
+        active_plan:
+          outgoingPlan,
+
+        workout_history:
+          outgoingFeedback,
+
+        plan_history:
+          [],
+
+        training_archive:
+          [],
+
+        weekly_review:
+          outgoingReview,
+
+        next_week_preview:
+          promotedPlan,
+
+        training_availability:
+          trainingAvailability,
+
+        updated_at:
+          new Date()
+            .toISOString(),
+      })
+      .eq(
+        "user_id",
+        userId
+      );
+
+
+  if (updateError) {
+    throw new Error(
+      `Could not seed authenticated rollover state: ${updateError.message}`
+    );
+  }
+
+
+  return {
+    previousWeekStart,
+    currentWeekStart,
+    outgoingPlan,
+    outgoingFeedback,
+    outgoingReview,
+    promotedPlan,
+    trainingAvailability,
+  };
+}
+
+
+export async function readAuthenticatedWeekRolloverState(
+  userId: string
+): Promise<{
+  activePlan: TrainingPlan | null;
+  workoutHistory: WorkoutFeedback[];
+  planHistory: TrainingPlan[];
+  trainingArchive: Array<{
+    plan: TrainingPlan;
+    feedback: WorkoutFeedback[];
+    review: WeeklyReview | null;
+    archivedAt: string;
+  }>;
+  weeklyReview: WeeklyReview | null;
+  nextWeekPreview: TrainingPlan | null;
+  trainingAvailability: TrainingAvailability[];
+}> {
+
+  const admin =
+    createAdminClient();
+
+
+  const {
+    data,
+    error,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .select(
+        "active_plan,workout_history,plan_history,training_archive,weekly_review,next_week_preview,training_availability"
+      )
+      .eq(
+        "user_id",
+        userId
+      )
+      .single();
+
+
+  if (error) {
+    throw new Error(
+      `Could not read authenticated rollover state: ${error.message}`
+    );
+  }
+
+
+  return {
+    activePlan:
+      data?.active_plan
+        ? data.active_plan as unknown as TrainingPlan
+        : null,
+
+    workoutHistory:
+      Array.isArray(
+        data?.workout_history
+      )
+        ? data.workout_history as unknown as WorkoutFeedback[]
+        : [],
+
+    planHistory:
+      Array.isArray(
+        data?.plan_history
+      )
+        ? data.plan_history as unknown as TrainingPlan[]
+        : [],
+
+    trainingArchive:
+      Array.isArray(
+        data?.training_archive
+      )
+        ? data.training_archive as unknown as Array<{
+            plan: TrainingPlan;
+            feedback: WorkoutFeedback[];
+            review: WeeklyReview | null;
+            archivedAt: string;
+          }>
+        : [],
+
+    weeklyReview:
+      data?.weekly_review
+        ? data.weekly_review as unknown as WeeklyReview
+        : null,
+
+    nextWeekPreview:
+      data?.next_week_preview
+        ? data.next_week_preview as unknown as TrainingPlan
+        : null,
+
+    trainingAvailability:
+      Array.isArray(
+        data?.training_availability
+      )
+        ? data.training_availability as unknown as TrainingAvailability[]
+        : [],
   };
 }
