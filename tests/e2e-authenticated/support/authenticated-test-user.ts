@@ -1996,3 +1996,339 @@ export async function readAuthenticatedWeekRolloverState(
         : [],
   };
 }
+
+
+export type AuthenticatedMissedWeeksRecoveryFixture = {
+  staleWeekStart: string;
+  stalePreviewWeekStart: string;
+  currentWeekStart: string;
+  outgoingPlan: TrainingPlan;
+  outgoingFeedback: WorkoutFeedback[];
+  outgoingReview: WeeklyReview;
+  stalePreview: TrainingPlan;
+  trainingAvailability: TrainingAvailability[];
+};
+
+
+export async function seedAuthenticatedMissedWeeksRecoveryState(
+  userId: string
+): Promise<AuthenticatedMissedWeeksRecoveryFixture> {
+
+  await seedAuthenticatedTestUserState(
+    userId
+  );
+
+
+  const admin =
+    createAdminClient();
+
+
+  const {
+    data,
+    error,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .select(
+        "active_plan,workout_history,weekly_review"
+      )
+      .eq(
+        "user_id",
+        userId
+      )
+      .single();
+
+
+  if (
+    error ||
+    !data?.active_plan ||
+    !data?.weekly_review
+  ) {
+    throw new Error(
+      [
+        "Could not prepare missed-weeks recovery fixture.",
+        error?.message,
+      ]
+        .filter(
+          Boolean
+        )
+        .join(
+          " "
+        )
+    );
+  }
+
+
+  const baselinePlan =
+    data.active_plan as unknown as TrainingPlan;
+
+  const currentWeekStart =
+    getCurrentOsloWeekStart();
+
+  const staleWeekStart =
+    addDays(
+      currentWeekStart,
+      -21
+    );
+
+  const stalePreviewWeekStart =
+    addDays(
+      currentWeekStart,
+      -14
+    );
+
+
+  /*
+    Last genuinely active week was three calendar weeks ago.
+  */
+  const outgoingPlan:
+    TrainingPlan = {
+      ...baselinePlan,
+
+      summary:
+        "Deterministic stale active week for missed-weeks recovery E2E.",
+
+      focus:
+        "Last real week before athlete absence",
+
+      weekStart:
+        staleWeekStart,
+
+      weekNumber:
+        Math.max(
+          1,
+          Number(
+            baselinePlan.weekNumber ??
+            4
+          ) - 3
+        ),
+
+      days:
+        baselinePlan.days.map(
+          (
+            session,
+            index
+          ) => ({
+            ...session,
+
+            sessionId:
+              `${staleWeekStart}-${index}-missed-weeks-outgoing`,
+
+            date:
+              addDays(
+                staleWeekStart,
+                index
+              ),
+          })
+        ),
+
+      additionalSessions:
+        [],
+    };
+
+
+  const baselineFeedback =
+    Array.isArray(
+      data.workout_history
+    )
+      ? data.workout_history as unknown as WorkoutFeedback[]
+      : [];
+
+
+  const outgoingFeedback:
+    WorkoutFeedback[] =
+      baselineFeedback.map(
+        (
+          feedback,
+          index
+        ) => ({
+          ...feedback,
+
+          id:
+            `missed-weeks-feedback-${userId}-${index}`,
+
+          sessionId:
+            outgoingPlan.days[
+              Math.min(
+                5,
+                outgoingPlan.days.length - 1
+              )
+            ]?.sessionId ??
+            feedback.sessionId,
+
+          date:
+            addDays(
+              staleWeekStart,
+              5
+            ),
+        })
+      );
+
+
+  const outgoingReview =
+    data.weekly_review as unknown as WeeklyReview;
+
+
+  /*
+    This preview belongs to another stale week.
+
+    Because the gap is greater than one week it must never be
+    promoted or preserved as the new active plan.
+  */
+  const stalePreview:
+    TrainingPlan = {
+      ...baselinePlan,
+
+      summary:
+        "Stale preview that must be discarded during recovery.",
+
+      focus:
+        "Obsolete missed-week preview",
+
+      weekStart:
+        stalePreviewWeekStart,
+
+      weekNumber:
+        Math.max(
+          1,
+          Number(
+            baselinePlan.weekNumber ??
+            3
+          ) - 2
+        ),
+
+      days:
+        baselinePlan.days.map(
+          (
+            session,
+            index
+          ) => ({
+            ...session,
+
+            sessionId:
+              `${stalePreviewWeekStart}-${index}-stale-preview`,
+
+            date:
+              addDays(
+                stalePreviewWeekStart,
+                index
+              ),
+
+            title:
+              index === 1
+                ? "STALE PREVIEW MUST DISAPPEAR"
+                : session.title,
+          })
+        ),
+
+      additionalSessions:
+        [],
+    };
+
+
+  /*
+    Current-week hard constraints.
+
+    The deterministic /api/plan response used by the E2E test
+    will deliberately respect these.
+  */
+  const trainingAvailability:
+    TrainingAvailability[] = [
+      {
+        date:
+          addDays(
+            currentWeekStart,
+            0
+          ),
+
+        status:
+          "Unavailable",
+
+        note:
+          "Missed-weeks E2E unavailable Monday.",
+      },
+
+      {
+        date:
+          addDays(
+            currentWeekStart,
+            2
+          ),
+
+        status:
+          "Limited",
+
+        allowedSports:
+          [
+            "Swim",
+          ],
+
+        maxDurationMinutes:
+          45,
+
+        note:
+          "Missed-weeks E2E Wednesday swim window.",
+      },
+    ];
+
+
+  const {
+    error:
+      updateError,
+  } =
+    await admin
+      .from(
+        "training_state"
+      )
+      .update({
+        active_plan:
+          outgoingPlan,
+
+        workout_history:
+          outgoingFeedback,
+
+        plan_history:
+          [],
+
+        training_archive:
+          [],
+
+        weekly_review:
+          outgoingReview,
+
+        next_week_preview:
+          stalePreview,
+
+        training_availability:
+          trainingAvailability,
+
+        updated_at:
+          new Date()
+            .toISOString(),
+      })
+      .eq(
+        "user_id",
+        userId
+      );
+
+
+  if (updateError) {
+    throw new Error(
+      `Could not seed missed-weeks recovery state: ${updateError.message}`
+    );
+  }
+
+
+  return {
+    staleWeekStart,
+    stalePreviewWeekStart,
+    currentWeekStart,
+    outgoingPlan,
+    outgoingFeedback,
+    outgoingReview,
+    stalePreview,
+    trainingAvailability,
+  };
+}
