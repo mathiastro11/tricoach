@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element -- Local exercise images must work in Capacitor and Next.js. */
 
 import {
   getExercise,
@@ -821,13 +821,14 @@ function MovementFrame({
 
       <div className="exerciseIllustrationLibraryStage">
 
-        <Image
+        <img
           src={src}
           alt={alt}
           className="exerciseIllustrationLibraryImage"
           width={480}
           height={480}
-          unoptimized
+          loading="lazy"
+          decoding="async"
         />
 
       </div>
