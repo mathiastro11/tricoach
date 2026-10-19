@@ -1,5 +1,7 @@
 "use client";
 
+import { apiFetch } from "@/lib/api-client";
+
 import {
   useEffect,
   useRef,
@@ -491,7 +493,7 @@ export default function RacePickerModal({
 
 
             const response =
-              await fetch(
+              await apiFetch(
                 `/api/races?${params.toString()}`,
                 {
                   signal:

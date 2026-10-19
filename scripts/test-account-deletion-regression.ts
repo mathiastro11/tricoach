@@ -153,7 +153,7 @@ check(
 
 const deletionFetch =
   page.indexOf(
-    'fetch(\n          "/api/account"'
+    'apiFetch(\n          "/api/account"'
   );
 
 check(

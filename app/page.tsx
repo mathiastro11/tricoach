@@ -1,5 +1,7 @@
 "use client";
 
+import { apiFetch } from "@/lib/api-client";
+
 import {
   TRIATHLON_EXPERIENCE_OPTIONS,
   DISCIPLINE_LEVEL_OPTIONS,
@@ -3950,7 +3952,7 @@ export default function Home() {
     setIsCoachThinking(true);
 
     try {
-      const response = await fetch("/api/coach", {
+      const response = await apiFetch("/api/coach", {
         method: "POST",
 
         headers: {
@@ -5046,7 +5048,7 @@ export default function Home() {
     try {
 
       const response =
-        await fetch(
+        await apiFetch(
           "/api/next-week",
           {
             method:
@@ -5395,7 +5397,7 @@ export default function Home() {
     setIsNextWeekLoading(true);
 
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         "/api/next-week",
         {
           method: "POST",
@@ -5817,7 +5819,7 @@ export default function Home() {
 
 
         const response =
-          await fetch(
+          await apiFetch(
             "/api/plan",
             {
               method:
@@ -6235,7 +6237,7 @@ export default function Home() {
     try {
 
       const response =
-        await fetch(
+        await apiFetch(
           "/api/roadmap",
           {
             method:
@@ -6378,7 +6380,7 @@ export default function Home() {
     setIsPlanLoading(true);
 
     try {
-      const response = await fetch("/api/plan", {
+      const response = await apiFetch("/api/plan", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -6717,7 +6719,7 @@ export default function Home() {
 
 
       const response =
-        await fetch(
+        await apiFetch(
           "/api/account",
           {
             method:
@@ -6944,7 +6946,7 @@ export default function Home() {
       try {
 
         const response =
-          await fetch(
+          await apiFetch(
             "/api/roadmap",
             {
               method:
@@ -7410,7 +7412,7 @@ export default function Home() {
     try {
 
       const response =
-        await fetch(
+        await apiFetch(
           "/api/goal-change-week",
           {
             method:
@@ -8269,7 +8271,7 @@ export default function Home() {
     try {
 
       const response =
-        await fetch(
+        await apiFetch(
           "/api/plan",
           {
             method:
